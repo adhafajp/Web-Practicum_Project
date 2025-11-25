@@ -1,0 +1,132 @@
+-- 1. Buat Database
+CREATE DATABASE IF NOT EXISTS db_donasi_oksigen;
+USE db_donasi_oksigen;
+
+-- ==========================================
+-- 1. 👥 KELOMPOK PENGGUNA & ADMIN
+-- ==========================================
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL, -- Password harus di-hash (misal: MD5 atau BCRYPT)
+    role ENUM('admin', 'editor') DEFAULT 'editor',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ==========================================
+-- 2. 🌲 KELOMPOK DATA MASTER (PRODUK & PROYEK)
+-- ==========================================
+
+CREATE TABLE tree_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL, -- Harga per pohon
+    oxygen_emission DECIMAL(10, 2), -- Oksigen/hari (gram/kg)
+    co2_absorption DECIMAL(10, 2), -- Serapan CO2/tahun (kg)
+    image_url TEXT,
+    description TEXT
+);
+
+CREATE TABLE locations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    latitude DECIMAL(10, 8), -- Koordinat Peta
+    longitude DECIMAL(11, 8), -- Koordinat Peta
+    target_trees INT DEFAULT 0,
+    planted_trees INT DEFAULT 0,
+    image_url TEXT,
+    description TEXT
+);
+
+-- ==========================================
+-- 3. 💸 KELOMPOK TRANSAKSI (INTI WEBSITE)
+-- ==========================================
+
+CREATE TABLE donors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    -- Menambahkan index agar pencarian donatur via email cepat
+    INDEX (email)
+);
+
+CREATE TABLE donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_number VARCHAR(50) NOT NULL UNIQUE,
+    donor_id INT NOT NULL,
+    tree_type_id INT, -- Bisa NULL jika donasi umum (bukan spesifik pohon)
+    amount DECIMAL(15, 2) NOT NULL,
+    tree_count INT DEFAULT 0,
+    payment_status ENUM('pending', 'success', 'failed', 'expired') DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    is_anonymous BOOLEAN DEFAULT FALSE,
+    message TEXT,
+    transaction_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Relasi (Foreign Keys)
+    CONSTRAINT fk_donations_donor FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE RESTRICT,
+    CONSTRAINT fk_donations_tree FOREIGN KEY (tree_type_id) REFERENCES tree_types(id) ON DELETE SET NULL
+);
+
+-- ==========================================
+-- 4. 📰 KELOMPOK KONTEN & EDUKASI
+-- ==========================================
+
+CREATE TABLE articles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    content LONGTEXT,
+    category VARCHAR(50),
+    thumbnail_url TEXT,
+    author_id INT NOT NULL,
+    is_published BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Relasi: Jika user dihapus, artikelnya tetap ada tapi authornya NULL atau hapus artikelnya (tergantung kebijakan)
+    CONSTRAINT fk_articles_author FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE RESTRICT
+);
+
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    donation_id INT, -- Opsional, bisa dari donatur, bisa pengunjung biasa
+    sender_name VARCHAR(100),
+    message_content TEXT NOT NULL,
+    is_approved BOOLEAN DEFAULT FALSE, -- Moderasi komentar
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_messages_donation FOREIGN KEY (donation_id) REFERENCES donations(id) ON DELETE SET NULL
+);
+
+-- ==========================================
+-- CONTOH DATA DUMMY (SEEDING)
+-- Agar database tidak kosong saat dites
+-- ==========================================
+
+-- 1. Insert Admin (Password: 'admin123' -> MD5 hash contoh sederhana)
+INSERT INTO users (name, email, password, role) VALUES 
+('Admin Utama', 'admin@donasioksigen.com', MD5('admin123'), 'admin');
+
+-- 2. Insert Jenis Pohon
+INSERT INTO tree_types (name, price, oxygen_emission, co2_absorption, description) VALUES 
+('Mangga', 50000, 200.5, 25.0, 'Pohon buah yang rindang dan menghasilkan O2 tinggi.'),
+('Mahoni', 35000, 180.0, 30.0, 'Pohon kayu keras yang sangat baik menyerap polutan jalan raya.');
+
+-- 3. Insert Lokasi
+INSERT INTO locations (name, latitude, longitude, target_trees, planted_trees) VALUES 
+('Hutan Kota Srengseng', -6.216239, 106.764516, 1000, 150),
+('Pesisir Pantai Indah Kapuk', -6.110599, 106.736936, 5000, 1200);
+
+-- 4. Insert Donatur
+INSERT INTO donors (name, email, phone) VALUES 
+('Adhafa Joan', 'adhafa@email.com', '08123456789'),
+('Kelfin Farelino', 'kelfin@email.com', '08987654321');
+
+-- 5. Insert Transaksi Donasi
+INSERT INTO donations (invoice_number, donor_id, tree_type_id, amount, tree_count, payment_status, payment_method, message) VALUES 
+('INV/2025/001', 1, 1, 100000, 2, 'success', 'gopay', 'Semoga bermanfaat bagi bumi!'),
+('INV/2025/002', 2, 2, 35000, 1, 'pending', 'bank_transfer', 'Bismillah.');
