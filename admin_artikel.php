@@ -15,13 +15,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
         $rowImage = mysqli_fetch_assoc($resultImage);
         $gambar = $rowImage['thumbnail_url'];
 
-        // Cek: Apakah $gambar tidak kosong?
         if (!empty($gambar)) {
             if (!filter_var($gambar, FILTER_VALIDATE_URL)) {
                 
-                // Cek: Apakah file fisik benar-benar ada di folder?
                 if (file_exists($gambar)) {
-                    unlink($gambar); // Perintah untuk menghapus file
+                    unlink($gambar);
                 } 
                 elseif (file_exists("uploads/" . $gambar)) { unlink("uploads/" . $gambar); }
             }
@@ -150,8 +148,8 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
             <thead>
                 <tr>
                     <th style="width: 40%;">Artikel</th>
-                    <th>Kategori</th>
-                    <th>Tanggal</th>
+                    <th class="text-nowrap">Kategori</th>
+                    <th class="text-nowrap">Tanggal</th>
                     <th>Penulis</th>
                     <th>Status</th>
                     <th style="text-align: right;">Aksi</th>
@@ -189,14 +187,23 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
                                 <span class="badge-status-draft">Draft • Konsep</span>
                             <?php endif; ?>
                         </td>
-                        <td style="text-align: right;">
-                            <a href="admin_artikel_form.php?id=<?= $row['id'] ?>" class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                            
-                            <button onclick="confirmDelete(<?= $row['id'] ?>, '<?= addslashes(htmlspecialchars($row['title'])) ?>')" class="action-btn delete border-0 bg-transparent" title="Hapus">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                            
-                            <a href="detail_artikel.php?slug=<?= $row['slug'] ?>" target="_blank" class="action-btn view" title="Lihat"><i class="fa-solid fa-eye"></i></a>
+                        <td class="text-end">
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                <a href="detail_artikel.php?slug=<?= $row['slug'] ?>" target="_blank" 
+                                class="btn-action btn-view" title="Lihat di Web">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </a>
+
+                                <a href="admin_artikel_form.php?id=<?= $row['id'] ?>" 
+                                class="btn-action btn-edit" title="Edit Data">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                
+                                <button onclick="confirmDelete(<?= $row['id'] ?>, '<?= addslashes(htmlspecialchars($row['title'])) ?>')" 
+                                        class="btn-action btn-delete" title="Hapus Permanen">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     <?php endwhile; ?>

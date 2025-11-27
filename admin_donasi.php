@@ -3,27 +3,42 @@
 session_start();
 include 'koneksi.php';
 
-// Handle Logic: Verifikasi Donasi
+// --- VERIFIKASI (Terima/Tolak) ---
 if (isset($_POST['verifikasi_id'])) {
     $id = intval($_POST['verifikasi_id']);
-    $status_baru = $_POST['status']; 
+    $status_baru = $_POST['status'];
     
-    // Update status pembayaran (success/failed)
     $queryUpdate = "UPDATE donations SET payment_status = '$status_baru' WHERE id = $id";
     mysqli_query($conn, $queryUpdate);
     
-    // Redirect untuk mencegah resubmission form saat refresh
+    $_SESSION['pesan'] = "Status donasi berhasil diperbarui!";
     header("Location: admin_donasi.php"); exit;
 }
 
-// Setup Pagination & Filter
+// --- HAPUS DONASI ---
+if (isset($_POST['hapus_id'])) {
+    $id = intval($_POST['hapus_id']);
+    
+    // Hapus file gambar bukti jika ada
+    $qFile = mysqli_query($conn, "SELECT payment_proof FROM donations WHERE id = $id");
+    $f = mysqli_fetch_assoc($qFile);
+    if (!empty($f['payment_proof']) && file_exists("assets/uploads/".$f['payment_proof'])) {
+        unlink("assets/uploads/".$f['payment_proof']);
+    }
+
+    $queryDelete = "DELETE FROM donations WHERE id = $id";
+    mysqli_query($conn, $queryDelete);
+
+    $_SESSION['pesan'] = "Data donasi berhasil dihapus.";
+    header("Location: admin_donasi.php"); exit;
+}
+
+// --- SETUP PAGINATION & FILTER ---
 $limit = 8;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $start = ($page - 1) * $limit;
-
 $keyword = isset($_GET['cari']) ? mysqli_real_escape_string($conn, $_GET['cari']) : '';
 
-// Query Data (Hanya ambil status 'pending')
 $sqlBase = "SELECT d.*, u.name as donor_name FROM donations d 
             JOIN donors u ON d.donor_id = u.id 
             WHERE d.payment_status = 'pending'";
@@ -32,14 +47,11 @@ if ($keyword) {
     $sqlBase .= " AND (u.name LIKE '%$keyword%' OR d.invoice_number LIKE '%$keyword%')"; 
 }
 
-// Hitung total data
 $resultTotal = mysqli_query($conn, $sqlBase);
 $total_data = mysqli_num_rows($resultTotal);
 $total_pages = ceil($total_data / $limit);
 
-// Ambil data untuk halaman aktif
-$sqlData = $sqlBase . " ORDER BY d.transaction_date DESC LIMIT $start, $limit";
-$result = mysqli_query($conn, $sqlData);
+$result = mysqli_query($conn, $sqlBase . " ORDER BY d.transaction_date DESC LIMIT $start, $limit");
 ?>
 
 <!DOCTYPE html>
@@ -69,21 +81,24 @@ $result = mysqli_query($conn, $sqlData);
 </div>
 
 <div class="main-content">
+    
+    <?php if(isset($_SESSION['pesan'])): ?>
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+            <?= $_SESSION['pesan']; unset($_SESSION['pesan']); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+
     <div class="d-flex justify-content-between align-items-start">
         <div>
-            <h1 class="page-title">Antrian Verifikasi Donasi</h1>
-            <p class="page-subtitle">Daftar donasi masuk dengan status Menunggu yang perlu diproses.</p>
+            <h1 class="page-title">Verifikasi Donasi</h1>
+            <p class="page-subtitle">Daftar donasi masuk dengan status <b>Pending</b>.</p>
         </div>
         
         <form method="GET" class="top-bar">
-            <input type="text" name="cari" class="search-input" placeholder="Cari nama donatur atau ID..." value="<?= htmlspecialchars($keyword) ?>">
-            <div class="status-pill">Status: Menunggu</div>
+            <input type="text" name="cari" class="search-input" placeholder="Cari nama / ID donasi..." value="<?= htmlspecialchars($keyword) ?>">
+            <div class="status-pill">Menunggu</div>
         </form>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <span class="text-muted small">Menampilkan donasi yang siap diverifikasi secara manual.</span>
-        <span class="badge bg-light text-secondary border rounded-pill px-3"><?= $total_data ?> donasi menunggu verifikasi</span>
     </div>
 
     <div class="custom-table-container">
@@ -92,7 +107,7 @@ $result = mysqli_query($conn, $sqlData);
             <div class="col-2">Nominal</div>
             <div class="col-3">Bukti Transfer</div>
             <div class="col-4">Tanggal</div>
-            <div class="col-5">Aksi / Status</div>
+            <div class="col-5">Aksi</div>
         </div>
 
         <?php if(mysqli_num_rows($result) > 0): ?>
@@ -100,19 +115,33 @@ $result = mysqli_query($conn, $sqlData);
             <div class="list-row">
                 <div class="col-1">
                     <span class="donor-name"><?= htmlspecialchars($row['donor_name']) ?></span>
-                    <span class="donor-id">ID Donasi: #<?= $row['invoice_number'] ?></span>
+                    <span class="donor-id">#<?= $row['invoice_number'] ?></span>
                 </div>
-                <div class="col-2">Rp <?= number_format($row['amount'], 0, ',', '.') ?></div>
+                
+                <div class="col-2" style="color: var(--green-brand);">
+                    Rp <?= number_format($row['amount'], 0, ',', '.') ?>
+                </div>
+                
                 <div class="col-3">
                     <button type="button" class="btn-lihat" data-bs-toggle="modal" data-bs-target="#modalBukti<?= $row['id'] ?>">
-                        <i class="fa-regular fa-image"></i> Lihat Bukti
+                        <i class="fa-regular fa-image"></i> Lihat
                     </button>
                 </div>
-                <div class="col-4"><?= date('d M Y - H:i', strtotime($row['transaction_date'])) ?> WIB</div>
+                
+                <div class="col-4">
+                    <?= date('d M Y, H:i', strtotime($row['transaction_date'])) ?>
+                </div>
+                
                 <div class="col-5">
-                    <button class="btn-verif-outline" data-bs-toggle="modal" data-bs-target="#modalVerif<?= $row['id'] ?>">
-                        <i class="fa-regular fa-circle-check"></i> Verifikasi
-                    </button>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <button class="btn-verif-outline" data-bs-toggle="modal" data-bs-target="#modalVerif<?= $row['id'] ?>" title="Verifikasi">
+                            <i class="fa-solid fa-check"></i> Verif
+                        </button>
+
+                        <button class="btn-hapus-outline" data-bs-toggle="modal" data-bs-target="#modalHapus<?= $row['id'] ?>" title="Hapus Data">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -120,71 +149,73 @@ $result = mysqli_query($conn, $sqlData);
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fs-6 fw-bold">Bukti Transfer #<?= $row['invoice_number'] ?></h5>
+                            <h6 class="fw-bold">Bukti Transfer #<?= $row['invoice_number'] ?></h6>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body text-center">
-                            
+                        <div class="modal-body text-center p-4">
                             <?php 
-                                // Cek apakah data payment_proof ada di database
-                                $bukti = $row['payment_proof']; 
-                                $path_bukti = "assets/uploads/" . $bukti;
+                                $path = "assets/uploads/" . $row['payment_proof'];
+                                if(!empty($row['payment_proof']) && file_exists($path)): 
                             ?>
-
-                            <?php if(!empty($bukti) && file_exists($path_bukti)): ?>
-                                <img src="<?= $path_bukti ?>" alt="Bukti Transfer" class="img-fluid rounded shadow-sm" style="max-height: 400px; width: auto;">
-                                <a href="<?= $path_bukti ?>" target="_blank" class="btn btn-sm btn-outline-secondary mt-3">
-                                    <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Penuh
-                                </a>
+                                <img src="<?= $path ?>" class="img-fluid rounded shadow-sm mb-3">
+                                <a href="<?= $path ?>" target="_blank" class="btn btn-sm btn-outline-dark w-100">Buka Gambar Penuh</a>
                             <?php else: ?>
-                                <div class="py-5 text-muted bg-light rounded border border-dashed">
-                                    <i class="fa-solid fa-image-slash fa-3x mb-3 text-secondary"></i><br>
-                                    <span class="fw-bold">Tidak ada bukti transfer</span><br>
-                                    <small>User mungkin tidak mengupload gambar atau file rusak.</small>
-                                </div>
+                                <p class="text-muted small">Tidak ada bukti transfer.</p>
                             <?php endif; ?>
-
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="modal fade" id="modalVerif<?= $row['id'] ?>" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
                     <div class="modal-content">
-                        <div class="modal-header border-0"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                        <div class="modal-header border-0"><h6 class="modal-title fw-bold">Konfirmasi</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                         <div class="modal-body text-center">
-                            <p>Terima donasi <strong>Rp <?= number_format($row['amount']) ?></strong> dari <strong><?= htmlspecialchars($row['donor_name']) ?></strong>?</p>
-                            <form method="POST" class="d-flex justify-content-center gap-2 mt-4">
+                            <p class="small text-muted mb-4">Terima donasi Rp <?= number_format($row['amount']) ?>?</p>
+                            <form method="POST" class="d-grid gap-2">
                                 <input type="hidden" name="verifikasi_id" value="<?= $row['id'] ?>">
-                                <button name="status" value="failed" class="btn btn-outline-danger">Tolak</button>
-                                <button name="status" value="success" class="btn btn-success">Verifikasi (Terima)</button>
+                                <button name="status" value="success" class="btn btn-success btn-sm">Terima (Valid)</button>
+                                <button name="status" value="failed" class="btn btn-outline-danger btn-sm">Tolak (Invalid)</button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="modalHapus<?= $row['id'] ?>" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-body text-center pt-4">
+                            <i class="fa-solid fa-triangle-exclamation text-danger fa-2x mb-3"></i>
+                            <h6 class="fw-bold">Hapus Data?</h6>
+                            <p class="small text-muted mb-4">Data ini akan dihapus permanen.</p>
+                            <form method="POST" class="d-flex justify-content-center gap-2">
+                                <input type="hidden" name="hapus_id" value="<?= $row['id'] ?>">
+                                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-danger btn-sm">Ya, Hapus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <?php endwhile; ?>
         <?php else: ?>
-            <div class="p-5 text-center text-muted">Tidak ada data antrian.</div>
+            <div class="p-5 text-center text-muted">Belum ada antrian donasi.</div>
         <?php endif; ?>
     </div>
     
-    <div class="d-flex justify-content-between align-items-center mt-3 text-secondary small">
-        <span>Menampilkan <?= mysqli_num_rows($result) ?> dari <?= $total_data ?> data</span>
+    <div class="d-flex justify-content-end mt-3">
         <div class="btn-group">
             <?php if($page > 1): ?>
-                <a href="?page=<?= $page - 1 ?>&cari=<?= $keyword ?>" class="btn btn-sm btn-outline-secondary rounded-start-pill">Sebelumnya</a>
-            <?php else: ?>
-                <button class="btn btn-sm btn-outline-secondary rounded-start-pill" disabled>Sebelumnya</button>
+                <a href="?page=<?= $page - 1 ?>&cari=<?= $keyword ?>" class="btn btn-sm btn-outline-secondary">Prev</a>
             <?php endif; ?>
-
-            <span class="btn btn-sm btn-outline-secondary disabled">Halaman <?= $page ?></span>
+            
+            <button class="btn btn-sm btn-outline-secondary disabled"><?= $page ?></button>
             
             <?php if($page < $total_pages): ?>
-                <a href="?page=<?= $page + 1 ?>&cari=<?= $keyword ?>" class="btn btn-sm btn-outline-secondary rounded-end-pill">Berikutnya</a>
-            <?php else: ?>
-                <button class="btn btn-sm btn-outline-secondary rounded-end-pill" disabled>Berikutnya</button>
+                <a href="?page=<?= $page + 1 ?>&cari=<?= $keyword ?>" class="btn btn-sm btn-outline-secondary">Next</a>
             <?php endif; ?>
         </div>
     </div>

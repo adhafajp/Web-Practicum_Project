@@ -7,123 +7,290 @@
 }
 
 body {
-    background-color: #F5F7FA; /* Sedikit lebih terang agar modern */
+    background-color: #F5F7FA;
+    /* Sedikit lebih terang agar modern */
     padding-top: 80px;
     font-family: 'Inter', sans-serif;
 }
-.main-container { padding-bottom: 100px; }
 
-/* --- Header Steps --- */
-.step-label { font-size: 14px; color: #666; margin-bottom: 8px; }
-.progress-bar-container { height: 6px; background-color: #D9D9D9; border-radius: 10px; margin-bottom: 40px; width: 300px; }
-.progress-bar-fill { 
-    height: 100%; 
-    background-color: var(--primary-green); 
-    width: 66%; 
-    border-radius: 10px; 
+.main-container {
+    padding-bottom: 100px;
 }
 
-h2.page-title { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 24px; margin-bottom: 10px; color: #1a1a1a; }
-p.page-subtitle { font-size: 14px; color: #666; margin-bottom: 30px; }
+/* --- Header Steps --- */
+.step-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.progress-bar-container {
+    height: 6px;
+    background-color: #D9D9D9;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    width: 300px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--primary-green);
+    width: 66%;
+    border-radius: 10px;
+}
+
+h2.page-title {
+    font-family: 'Inria Serif', serif;
+    font-weight: 700;
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+p.page-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 30px;
+}
 
 /* --- Payment Selection Card --- */
 .payment-card {
-    background: white; border-radius: 16px; padding: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 20px;
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    margin-bottom: 20px;
     border: 1px solid #fff;
 }
+
 .payment-category-title {
-    font-weight: 700; font-size: 15px; margin-bottom: 15px; display: block;
-    margin-top: 25px; color: #333; letter-spacing: 0.5px;
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 15px;
+    display: block;
+    margin-top: 25px;
+    color: #333;
+    letter-spacing: 0.5px;
 }
 
 /* --- LOGIKA TOMBOL BARU (Tanpa Bulatan) --- */
-.sub-payment-option { display: block; margin-bottom: 12px; cursor: pointer; position: relative; }
-.sub-payment-radio { display: none; } /* Sembunyikan radio button asli */
+.sub-payment-option {
+    display: block;
+    margin-bottom: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.sub-payment-radio {
+    display: none;
+}
+
+/* Sembunyikan radio button asli */
 
 .sub-payment-box {
     border: 1px solid var(--border-color);
-    border-radius: 12px; 
+    border-radius: 12px;
     padding: 16px 20px;
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; /* Agar teks di kiri, ikon check di kanan */
-    transition: all 0.2s ease-in-out; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Agar teks di kiri, ikon check di kanan */
+    transition: all 0.2s ease-in-out;
     background-color: white;
 }
 
 /* Efek Hover */
-.sub-payment-box:hover { 
-    border-color: #b0b0b0; 
+.sub-payment-box:hover {
+    border-color: #b0b0b0;
     background-color: #fcfcfc;
 }
 
 /* --- STATE: KETIKA DIPILIH (CHECKED) --- */
-.sub-payment-radio:checked + .sub-payment-box {
-    border: 2px solid var(--primary-green); /* Border lebih tebal & hijau */
+.sub-payment-radio:checked+.sub-payment-box {
+    border: 2px solid var(--primary-green);
+    /* Border lebih tebal & hijau */
     background-color: var(--light-green-bg);
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
-    transform: translateY(-1px); /* Efek timbul sedikit */
+    transform: translateY(-1px);
+    /* Efek timbul sedikit */
 }
 
 /* Ikon Centang (Checkmark) */
 .check-icon {
     font-size: 18px;
     color: var(--primary-green);
-    display: none; /* Default sembunyi */
+    display: none;
+    /* Default sembunyi */
     opacity: 0;
     transition: opacity 0.2s ease;
 }
 
 /* Tampilkan ikon centang saat dipilih */
-.sub-payment-radio:checked + .sub-payment-box .check-icon {
+.sub-payment-radio:checked+.sub-payment-box .check-icon {
     display: block;
     opacity: 1;
 }
 
 /* --- Typography Bank --- */
 .bank-info-container {
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
-.bank-name { font-weight: 700; font-size: 15px; color: #111; margin-bottom: 2px; }
-.bank-number { font-size: 13px; color: #555; margin-bottom: 2px; font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; }
-.bank-owner { font-size: 11px; color: #888; font-style: italic; }
+
+.bank-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #111;
+    margin-bottom: 2px;
+}
+
+.bank-number {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 2px;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.5px;
+}
+
+.bank-owner {
+    font-size: 11px;
+    color: #888;
+    font-style: italic;
+}
 
 /* QRIS Box */
 .qris-box {
-    background: #222; color: white; border-radius: 12px; padding: 20px;
-    text-align: center; width: 100%; max-width: 300px; margin: 15px auto 0;
-    display: none; /* Default hidden */
+    background: #222;
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+    margin: 15px auto 0;
+    display: none;
+    /* Default hidden */
     animation: fadeIn 0.3s ease-in-out;
 }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-.qris-img { width: 140px; height: 140px; background: white; margin: 0 auto 10px; display: block; border-radius: 8px; }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.qris-img {
+    width: 140px;
+    height: 140px;
+    background: white;
+    margin: 0 auto 10px;
+    display: block;
+    border-radius: 8px;
+}
 
 /* --- File Upload --- */
 .upload-box {
-    background-color: #F8F9FA; border: 2px dashed #ccc; border-radius: 12px; height: 80px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; margin-top: 10px; position: relative; transition: 0.2s;
+    background-color: #F8F9FA;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-top: 10px;
+    position: relative;
+    transition: 0.2s;
 }
-.upload-box:hover { border-color: var(--primary-blue); background-color: #ecf4ff; }
-.file-input-hidden { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-.upload-text { text-align: center; font-size: 13px; color: #666; }
+
+.upload-box:hover {
+    border-color: var(--primary-blue);
+    background-color: #ecf4ff;
+}
+
+.file-input-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-text {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
 
 /* --- Summary Sidebar --- */
 .summary-card {
-    background: white; border-radius: 16px; padding: 25px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 100px; border: 1px solid #f0f0f0;
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 100px;
+    border: 1px solid #f0f0f0;
 }
-.summary-title { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 18px; margin-bottom: 20px; }
-.summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #555; }
-.summary-total { border-top: 1px dashed #ddd; padding-top: 15px; margin-top: 15px; font-weight: 700; font-size: 16px; color: #000; }
 
-.donor-info { background-color: #F9F9F9; border-radius: 8px; padding: 12px; font-size: 12px; color: #666; margin-top: 20px; margin-bottom: 20px; border: 1px solid #eee; }
+.summary-title {
+    font-family: 'Inria Serif', serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+.summary-total {
+    border-top: 1px dashed #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000;
+}
+
+.donor-info {
+    background-color: #F9F9F9;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    color: #666;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
 
 .btn-pay {
-    background-color: var(--primary-blue); color: white; font-weight: 600; width: 100%;
-    border-radius: 50px; padding: 12px; border: none; transition: 0.3s; font-size: 15px;
+    background-color: var(--primary-blue);
+    color: white;
+    font-weight: 600;
+    width: 100%;
+    border-radius: 50px;
+    padding: 12px;
+    border: none;
+    transition: 0.3s;
+    font-size: 15px;
     box-shadow: 0 4px 15px rgba(47, 128, 237, 0.3);
 }
-.btn-pay:hover { background-color: #1a6cb0; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(47, 128, 237, 0.4); }
+
+.btn-pay:hover {
+    background-color: #1a6cb0;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(47, 128, 237, 0.4);
+}
