@@ -4,7 +4,6 @@ session_start();
 include 'koneksi.php';
 
 // --- LOGIKA STATISTIK (REAL-TIME) ---
-// Mengambil total donatur, total pohon, dan estimasi oksigen dari donasi sukses
 $query_stats = "SELECT 
     COUNT(DISTINCT d.donor_id) as total_donatur,
     SUM(d.tree_count) as total_pohon,
@@ -37,7 +36,7 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- 1. Variables & Global (Konsisten dengan halaman lain) --- */
+        /* --- 1. Variables & Global --- */
         :root {
             --primary-green: #5AB162;
             --dark-green-bg: #103831;
@@ -56,7 +55,7 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
             color: #333;
         }
 
-        /* Font Khusus Heading (Identitas Dashboard) */
+        /* Font Khusus Heading */
         h1, h2, h3, .serif-font { font-family: 'Inria Serif', serif; }
 
         /* --- 2. Navigation --- */
@@ -73,10 +72,24 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
         .btn-green { background-color: var(--primary-green) !important; color: white; border: none; }
         .btn-green:hover { background-color: #489c50 !important; }
 
+        /* Styling Khusus Dropdown User */
+        .user-dropdown-btn {
+            border: 1px solid #e0e0e0; background: white; color: #333;
+            padding: 5px 15px 5px 5px; transition: 0.3s;
+        }
+        .user-dropdown-btn:hover, .user-dropdown-btn.show {
+            background-color: #f8f9fa; border-color: var(--primary-green);
+        }
+        .user-avatar-sm {
+            width: 28px; height: 28px; background-color: var(--primary-green); color: white;
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 14px; margin-right: 8px;
+        }
+
         /* --- 3. Hero Section --- */
         .hero-dashboard {
             background: linear-gradient(135deg, #103831 0%, #1e5c4e 100%);
-            padding: 150px 0 180px; /* Padding bawah besar untuk overlap stats */
+            padding: 150px 0 180px;
             text-align: center; position: relative; color: #FFFFFF;
             border-radius: 0 0 50px 50px;
         }
@@ -106,16 +119,10 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
         .stat-card:hover { transform: translateY(-5px); }
         .stat-number { font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 5px; font-family: 'Poppins', sans-serif; }
         .stat-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-
-        /* Variants */
-        .stat-card.blue { border-color: var(--link-blue); }
-        .stat-card.blue .stat-label { color: var(--link-blue); }
         
-        .stat-card.gold { border-color: var(--gold-accent); }
-        .stat-card.gold .stat-label { color: var(--gold-accent); }
-        
-        .stat-card.green { border-color: var(--primary-green); }
-        .stat-card.green .stat-label { color: var(--primary-green); }
+        .stat-card.blue { border-color: var(--link-blue); } .stat-card.blue .stat-label { color: var(--link-blue); }
+        .stat-card.gold { border-color: var(--gold-accent); } .stat-card.gold .stat-label { color: var(--gold-accent); }
+        .stat-card.green { border-color: var(--primary-green); } .stat-card.green .stat-label { color: var(--primary-green); }
 
         /* --- 5. Why Section --- */
         .why-section { padding: 50px 0 100px; }
@@ -135,10 +142,7 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
 
         /* --- 6. Map Section --- */
         .map-section { padding: 60px 0; background-color: white; }
-        .map-container {
-            background-color: #F8F9FA; border-radius: 30px; padding: 40px;
-            border: 1px solid #eee;
-        }
+        .map-container { background-color: #F8F9FA; border-radius: 30px; padding: 40px; border: 1px solid #eee; }
         .map-img { width: 100%; height: auto; opacity: 0.9; mix-blend-mode: multiply; }
 
         /* --- 7. Footer --- */
@@ -174,7 +178,35 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                     <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li> 
                 </ul>
             </div>
-             <div class="d-flex">
+            
+            <div class="d-flex align-items-center">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <div class="dropdown me-3">
+                        <button class="btn btn-sm rounded-pill user-dropdown-btn dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar-sm">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <span class="fw-semibold me-1">
+                                <?= isset($_SESSION['user_name']) ? htmlspecialchars(strtok($_SESSION['user_name'], " ")) : 'Akun' ?>
+                            </span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 15px; min-width: 200px;">
+                            <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted">Akun Anda</h6></li>
+                            <li><span class="dropdown-item-text text-truncate fw-medium text-dark"><?= $_SESSION['user_name'] ?? 'User' ?></span></li>
+                            <li><hr class="dropdown-divider my-2"></li>
+                            <li>
+                                <a class="dropdown-item rounded text-danger fw-medium py-2" href="logout.php">
+                                    <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                <?php else: ?>
+                    <a href="auth.php" class="text-decoration-none text-secondary me-4 fw-semibold" style="font-size: 0.95rem;">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Masuk
+                    </a>
+                <?php endif; ?>
+
                 <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
             </div>
         </div>
@@ -229,29 +261,21 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon">
-                            <i class="fa-solid fa-hand-holding-dollar"></i> 
-                        </div> 
+                        <div class="why-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div> 
                         <h5 class="why-title">Transparansi Dana</h5>
                         <p class="why-desc">Pantau aliran donasi Anda secara realtime melalui laporan keuangan dan dashboard yang terbuka untuk publik.</p>
                     </div>
                 </div>
-                
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon">
-                            <i class="fa-solid fa-map-location-dot"></i> 
-                        </div> 
+                        <div class="why-icon"><i class="fa-solid fa-map-location-dot"></i></div> 
                         <h5 class="why-title">Lacak Pohonmu</h5>
                         <p class="why-desc">Dapatkan koordinat lokasi penanaman, foto pohon, dan update berkala mengenai pertumbuhan pohon donasi Anda.</p>
                     </div>
                 </div>
-                
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon">
-                            <i class="fa-solid fa-users-line"></i> 
-                        </div> 
+                        <div class="why-icon"><i class="fa-solid fa-users-line"></i></div> 
                         <h5 class="why-title">Dampak Terukur</h5>
                         <p class="why-desc">Kami menghitung estimasi oksigen yang dihasilkan dan karbon yang diserap dari setiap kontribusi Anda.</p>
                     </div>
