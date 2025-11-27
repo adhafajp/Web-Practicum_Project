@@ -1,6 +1,6 @@
 <?php
-// session_start();
-// if (!isset($_SESSION['user_id'])) { header("Location: auth.php"); exit; }
+session_start();
+// session_destroy(); // Uncomment jika ingin reset session saat testing
 ?>
 
 <!DOCTYPE html>
@@ -10,278 +10,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donasi Oksigen - Form Donasi</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;700&family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
-        /* --- CSS KHUSUS HALAMAN DONASI --- */
-        body {
-            background-color: var(--light-grey-bg);
-            padding-top: 80px;
-        }
+        /* --- 1. Global & Layout --- */
+        body { background-color: #E5E5E5; padding-top: 80px; font-family: 'Inter', sans-serif; }
+        .main-container { padding-bottom: 120px; }
 
-        .donation-header { padding: 40px 0; }
-
-        .progress-bar-container {
-            height: 6px; background-color: #E0E0E0; border-radius: 10px; margin-bottom: 30px; overflow: hidden;
-        }
-        .progress-bar-fill {
-            height: 100%; background-color: var(--primary-green); width: 33%; border-radius: 10px;
-        }
-
-        .form-card {
-            background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); margin-bottom: 30px;
-        }
-        .form-card h4 { margin-bottom: 25px; }
-
-        /* Pilihan Nominal */
-        .nominal-option { display: none; }
-        .nominal-label {
-            display: block; text-align: center; padding: 12px; background-color: var(--light-grey-bg);
-            border: 2px solid transparent; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s;
-        }
-        .nominal-option:checked + .nominal-label {
-            border-color: var(--primary-green); background-color: var(--light-green-bg); color: var(--primary-green);
-        }
-
-        .input-nominal-manual {
-            font-size: 1.5rem; font-weight: 700; border: none; border-bottom: 2px solid #ddd; border-radius: 0; padding: 10px 0;
-        }
-        .input-nominal-manual:focus { box-shadow: none; border-color: var(--primary-green); }
-
-        /* Pilihan Pohon */
-        .tree-card {
-            background: var(--light-grey-bg); border-radius: 15px; padding: 20px; text-align: center;
-            cursor: pointer; border: 2px solid transparent; transition: 0.3s; height: 100%;
-        }
-        .tree-option:checked + .tree-card { border-color: var(--primary-green); background-color: var(--light-green-bg); }
-        .tree-image { width: 100%; height: 120px; object-fit: contain; margin-bottom: 15px; background-color: #ddd; border-radius: 10px; }
-        .tree-name { font-weight: 700; margin-bottom: 5px; }
-        .tree-desc { font-size: 0.8rem; color: var(--grey-text); }
-
-        /* Impact Card */
-        .impact-card {
-            background: var(--light-green-bg); border-radius: 15px; padding: 30px; position: sticky; top: 100px;
-        }
-        .impact-icon {
-            width: 60px; height: 60px; background: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: var(--primary-green); font-size: 1.5rem; margin-bottom: 20px;
-        }
-
-        .form-control-lg { border-radius: 10px; padding: 15px; font-size: 1rem; border: 1px solid #ddd; }
-        .form-check-input:checked { background-color: var(--primary-green); border-color: var(--primary-green); }
-
-        /* Footer Floating */
-        .floating-submit-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: white;
-            padding: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 100;
-        }
+        /* --- 2. Progress Steps --- */
+        .step-label { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .progress-bar-container { height: 6px; background-color: #D9D9D9; border-radius: 10px; margin-bottom: 40px; width: 300px; }
+        .progress-bar-fill { height: 100%; background-color: #4CAF50; width: 33%; border-radius: 10px; } /* 33% untuk Step 1 */
         
-        .main-content { margin-bottom: 100px; }
+        .page-title { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 28px; color: #000; margin-bottom: 10px; }
+        .page-subtitle { font-size: 16px; color: #666; margin-bottom: 40px; max-width: 600px; }
+
+        /* --- 3. Form Components --- */
+        .form-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .form-card h4 { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 18px; margin-bottom: 10px; }
+        .form-card p.desc { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+        .form-control-custom { border: 1px solid #ccc; border-radius: 8px; padding: 12px; font-size: 14px; margin-bottom: 15px; width: 100%; }
+        .form-label-custom { font-weight: 700; font-size: 14px; margin-bottom: 5px; display: block; }
+        .form-check-input:checked { background-color: #4CAF50; border-color: #4CAF50; }
+
+        /* --- 4. Nominal Selector --- */
+        .nominal-value { 
+            font-family: 'Inria Serif', serif; font-weight: 700; font-size: 24px; color: #000; 
+            border: none; border-bottom: 1px solid #ddd; border-radius: 0; padding: 10px 0; width: 100%; margin-bottom: 20px; 
+        }
+        .nominal-value:focus { outline: none; border-bottom-color: #4CAF50; }
+        
+        .nominal-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge-nominal { 
+            background: #F0F0F0; border-radius: 20px; padding: 8px 16px; font-size: 14px; 
+            font-weight: 600; color: #333; cursor: pointer; transition: 0.2s; border: 1px solid transparent; 
+        }
+        .badge-nominal:hover, .badge-nominal.active { background: #E0F2E3; color: #4CAF50; border-color: #4CAF50; }
+
+        /* --- 5. Tree Selector (Radio Cards) --- */
+        .tree-label-wrapper { cursor: pointer; display: block; height: 100%; }
+        .tree-checkbox { display: none; } /* Hide default radio */
+        
+        .tree-img-container { 
+            width: 100%; height: 160px; background-color: transparent; 
+            display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: visible; 
+        }
+        .tree-img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 8px; }
+        
+        .tree-content-row { display: flex; align-items: flex-start; gap: 12px; padding-top: 10px; }
+        .selection-circle { 
+            width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 50%; flex-shrink: 0; 
+            margin-top: 2px; transition: all 0.2s; background-color: white; 
+        }
+        /* State Checked */
+        .tree-checkbox:checked + .tree-content-block .selection-circle { background-color: white; border: 7px solid #4CAF50; }
+        
+        .tree-title { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 18px; color: #000; margin: 0; line-height: 1.2; }
+        .tree-desc { font-size: 13px; color: #666; margin-top: 4px; }
+
+        /* --- 6. Impact Sidebar (Sticky) --- */
+        .impact-card { 
+            background-color: #E9F6EE; border-radius: 12px; padding: 25px; 
+            position: sticky; top: 100px; border: 1px solid #CDEAD6; 
+        }
+        .impact-card h5 { font-family: 'Inria Serif', serif; font-weight: 700; font-size: 16px; margin-bottom: 20px; }
+        .impact-text-block { margin-bottom: 20px; }
+        .impact-text-block h6 { font-weight: 700; font-size: 15px; margin: 0; color: #000; }
+        .impact-text-block p { font-size: 13px; color: #666; line-height: 1.4; margin: 0; }
+
+        /* --- 7. Floating Action Bar --- */
+        .floating-bar { 
+            background: white; padding: 20px 0; position: fixed; bottom: 0; left: 0; 
+            width: 100%; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000; 
+        }
+        .btn-submit-custom { background-color: #207FCE; color: white; border-radius: 50px; padding: 10px 30px; font-weight: 600; border: none; }
+        .btn-submit-custom:hover { background-color: #1a6cb0; color: white; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top bg-white">
         <div class="container">
             <a class="navbar-brand" href="dashboard.php">
-                <img src="assets/images/logo-donoxygen.svg" alt="Donoxygen Logo"><!--style="height: 40px; width: 150px;"-->
+                <img src="assets/images/logo-donoxygen.svg" alt="Donoxygen Logo" style="height: 35px;">
             </a>
             <div class="d-flex">
-                <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
+                <a href="donasi.php" class="btn btn-donasi-sm" style="background-color: #2F80ED; color: white; padding: 8px 24px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 14px;">Donasi Sekarang</a>
             </div>
         </div>
     </nav>
 
-    <div class="main-content">
-        <section class="donation-header container mt-5 pt-4">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="d-flex justify-content-between small text-muted mb-2">
-                        <span>Step 1 of 3</span>
-                        <span>Isi Data Donasi</span>
+    <div class="container main-container mt-5">
+        
+        <div class="step-label">Step 1 of 3</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill"></div>
+        </div>
+
+        <h2 class="page-title">Berdonasi untuk Nafas Bumi</h2>
+        <p class="page-subtitle">Pilih nominal donasi dan lihat langsung berapa banyak pohon dan oksigen yang Anda hasilkan</p>
+
+        <form action="donasi_pembayaran.php" method="POST">
+            <div class="row g-4">
+                
+                <div class="col-lg-7">
+                    
+                    <div class="form-card">
+                        <h4>Nominal Donasi</h4>
+                        <p class="desc">Masukkan jumlah donasi dalam rupiah atau pilih salah satu opsi cepat</p>
+                        
+                        <div class="d-flex justify-content-between align-items-end mb-2">
+                            <label style="font-size: 12px; font-weight: 700;">Nominal Donasi (IDR)</label>
+                            <span style="font-size: 12px; color: #666;">Minimal Rp10.000</span>
+                        </div>
+                        
+                        <input type="text" class="nominal-value" id="manualNominal" value="Rp 20.000">
+                        <input type="hidden" name="nominal_fix" id="nominalFix" value="20000">
+                        
+                        <div class="nominal-badges">
+                            <div class="badge-nominal" onclick="setNominal(10000)">Rp 10 K</div>
+                            <div class="badge-nominal active" onclick="setNominal(20000)">Rp 20 K</div>
+                            <div class="badge-nominal" onclick="setNominal(50000)">Rp 50 K</div>
+                            <div class="badge-nominal" onclick="setNominal(100000)">Rp 100 K</div>
+                        </div>
                     </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar-fill"></div>
+
+                    <div class="form-card">
+                        <h4>Pilih Jenis Pohon (Opsional)</h4>
+                        <p class="desc">Pilih jenis pohon yang ingin Anda dukung.</p>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="tree-label-wrapper">
+                                    <input type="radio" name="pohon_id" value="1" class="tree-checkbox" checked>
+                                    <div class="tree-content-block">
+                                        <div class="tree-img-container"><img src="assets/images/pohon-mangga.jpeg" class="tree-img" alt="Mangga"></div>
+                                        <div class="tree-content-row">
+                                            <div class="selection-circle"></div>
+                                            <div><h5 class="tree-title">Mangga</h5><div class="tree-desc">Buah & Peneduh</div></div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="tree-label-wrapper">
+                                    <input type="radio" name="pohon_id" value="2" class="tree-checkbox">
+                                    <div class="tree-content-block">
+                                        <div class="tree-img-container"><img src="assets/images/pohon-mahoni.jpeg" class="tree-img" alt="Mahoni"></div>
+                                        <div class="tree-content-row">
+                                            <div class="selection-circle"></div>
+                                            <div><h5 class="tree-title">Mahoni</h5><div class="tree-desc">Penyerap CO2</div></div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="tree-label-wrapper">
+                                    <input type="radio" name="pohon_id" value="3" class="tree-checkbox">
+                                    <div class="tree-content-block">
+                                        <div class="tree-img-container"><img src="assets/images/pohon-bakau.jpeg" class="tree-img" alt="Bakau"></div>
+                                        <div class="tree-content-row">
+                                            <div class="selection-circle"></div>
+                                            <div><h5 class="tree-title">Bakau</h5><div class="tree-desc">Cegah Abrasi</div></div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="mb-3">Berdonasi untuk Nafas Bumi</h2>
-                    <p class="text-muted">Pilih nominal donasi dan lihat langsung berapa banyak pohon dan oksigen yang anda hasilkan.</p>
+
+                    <div class="form-card">
+                        <h4>Data Donatur</h4>
+                        <p class="desc">Isi data Anda untuk mengirimkan bukti donasi.</p>
+                        
+                        <label class="form-label-custom">Nama Lengkap</label>
+                        <input type="text" class="form-control-custom" name="nama" required>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Email</label>
+                                <input type="email" class="form-control-custom" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">No. HP</label>
+                                <input type="text" class="form-control-custom" name="hp">
+                            </div>
+                        </div>
+
+                        <label class="form-label-custom">Alamat</label>
+                        <textarea class="form-control-custom" name="alamat" rows="2" placeholder="Masukkan alamat lengkap (tidak wajib)"></textarea>
+                        
+                        <div class="form-check form-switch bg-light p-2 rounded ps-5 mt-2">
+                            <input class="form-check-input" type="checkbox" id="anonim" name="is_anonymous" style="margin-left: -30px;">
+                            <label class="form-check-label" for="anonim" style="font-size: 14px; color: #666; margin-left: 10px;">Sembunyikan nama saya (Anonim)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="impact-card">
+                        <h5>Dampak Donasi Anda</h5>
+                        <div class="impact-text-block">
+                            <h6 id="impactTreeText">Anda menanam <span id="impactTree">2</span> pohon baru</h6>
+                            <p>Estimasi nominal Rp<span id="impactNominal">20.000</span></p>
+                        </div>
+                        <div class="impact-text-block">
+                            <h6>Memproduksi sekitar <span id="impactOxygen">200</span> liter oksigen segar per hari.</h6>
+                            <p>Membantu menyerap polusi udara di perkotaan.</p>
+                        </div>
+                        <p style="font-size: 11px; color: #888; line-height: 1.4; margin-top: 20px;">*Perhitungan bersifat estimasi (1 Pohon = Rp 10.000)</p>
+                    </div>
                 </div>
             </div>
-        </section>
 
-        <section class="container mb-5">
-            <form action="proses_donasi.php" method="POST">
-                <div class="row g-5">
-                    <div class="col-lg-8">
-                        
-                        <div class="form-card">
-                            <h4>Nominal Donasi</h4>
-                            <p class="text-muted mb-4">Masukkan jumlah donasi dalam rupiah atau pilih salah satu opsi cepat.</p>
-                            
-                            <div class="mb-4">
-                                <label class="form-label small text-muted">Nominal Donasi (IDR)</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-transparent border-0 ps-0 fs-4 fw-bold">Rp</span>
-                                    <input type="number" class="form-control input-nominal-manual" id="manualNominal" placeholder="0" value="20000">
-                                </div>
-                                <div class="text-end small text-muted mt-1">Minimal Rp10.000</div>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-6 col-md-3"><input type="radio" class="nominal-option" name="nominal_cepat" id="nom10k" value="10000"><label class="nominal-label" for="nom10k">Rp 10 K</label></div>
-                                <div class="col-6 col-md-3"><input type="radio" class="nominal-option" name="nominal_cepat" id="nom20k" value="20000" checked><label class="nominal-label" for="nom20k">Rp 20 K</label></div>
-                                <div class="col-6 col-md-3"><input type="radio" class="nominal-option" name="nominal_cepat" id="nom50k" value="50000"><label class="nominal-label" for="nom50k">Rp 50 K</label></div>
-                                <div class="col-6 col-md-3"><input type="radio" class="nominal-option" name="nominal_cepat" id="nom100k" value="100000"><label class="nominal-label" for="nom100k">Rp 100 K</label></div>
-                            </div>
-                        </div>
-
-                        <div class="form-card">
-                            <h4>Pilih Jenis Pohon (Opsional)</h4>
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <input type="radio" class="tree-option d-none" name="jenis_pohon" id="pohon1" value="mangga">
-                                    <label class="tree-card d-block" for="pohon1">
-                                        <img src="assets/images/pohon-mangga.png" class="tree-image" alt="Mangga">
-                                        <div class="tree-name">Mangga</div><div class="tree-desc">Buah & Peneduh</div>
-                                    </label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="radio" class="tree-option d-none" name="jenis_pohon" id="pohon2" value="mahoni">
-                                    <label class="tree-card d-block" for="pohon2">
-                                        <img src="assets/images/pohon-mahoni.png" class="tree-image" alt="Mahoni">
-                                        <div class="tree-name">Mahoni</div><div class="tree-desc">Penyerap CO2</div>
-                                    </label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="radio" class="tree-option d-none" name="jenis_pohon" id="pohon3" value="bakau">
-                                    <label class="tree-card d-block" for="pohon3">
-                                        <img src="assets/images/pohon-bakau.png" class="tree-image" alt="Bakau">
-                                        <div class="tree-name">Bakau</div><div class="tree-desc">Cegah Abrasi</div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-card">
-                            <h4>Data Donatur</h4>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Nama Lengkap</label>
-                                <input type="text" class="form-control form-control-lg" name="nama_donatur" required>
-                            </div>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold">Email</label>
-                                    <input type="email" class="form-control form-control-lg" name="email_donatur" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label fw-bold">No. HP</label>
-                                    <input type="tel" class="form-control form-control-lg" name="hp_donatur" required>
-                                </div>
-                            </div>
-                            <div class="form-check form-switch mt-4">
-                                <input class="form-check-input" type="checkbox" role="switch" id="anonimSwitch" name="is_anonymous">
-                                <label class="form-check-label" for="anonimSwitch">Sembunyikan nama saya (Donasi sebagai anonim)</label>
-                            </div>
-                        </div>
-                    </div> 
-
-                    <div class="col-lg-4">
-                        <div class="impact-card">
-                            <h5 class="mb-4">Dampak Donasi Anda</h5>
-                            <div class="d-flex mb-4">
-                                <div class="impact-icon flex-shrink-0"><i class="fa-solid fa-tree"></i></div>
-                                <div>
-                                    <h6 class="fw-bold">Anda menanam <span id="impactTreeCount">2</span> pohon baru</h6>
-                                    <p class="small text-muted mb-0">Estimasi nominal Rp<span id="impactNominal">20.000</span></p>
-                                </div>
-                            </div>
-                            <div class="d-flex">
-                                <div class="impact-icon flex-shrink-0"><i class="fa-solid fa-wind"></i></div>
-                                <div>
-                                    <h6 class="fw-bold">~<span id="impactOxygen">200</span> liter oksigen/hari.</h6>
-                                    <p class="small text-muted mb-0">*Estimasi pohon dewasa</p>
-                                </div>
-                            </div>
-                        </div>
+            <div class="floating-bar">
+                <div class="container d-flex justify-content-between align-items-center">
+                    <div>
+                        <div style="font-size: 14px; color: #666;">Langkah berikutnya: Konfirmasi metode pembayaran.</div>
                     </div>
+                    <button type="submit" class="btn-submit-custom">Lanjut ke Pembayaran</button>
                 </div>
+            </div>
 
-                <div class="floating-submit-bar">
-                    <div class="container d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="small text-muted">Langkah berikutnya:</div>
-                            <div class="fw-bold">Pembayaran</div>
-                        </div>
-                        <button type="submit" class="btn btn-donasi-sm btn-lg px-5">Lanjut</button>
-                    </div>
-                </div>
-            </form>
-        </section>
+        </form>
     </div>
 
-    <footer>
-        <div class="container">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6">
-                    <img src="assets/images/logo-donoxygen.svg" alt="Logo Putih" class="mb-4" style="height: 40px; width: 150px;">
-                    <p style="color: #e0e0e0;">Misi kami sederhana: menghubungkan donatur, komunitas, dan alam untuk menghadirkan nafas baru bagi bumi.</p>
-                </div>
-                <div class="col-lg-2 col-md-6 col-6">
-                    <h5>Navigasi</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="dashboard.php">Home</a></li>
-                        <li><a href="donasi.php">Donasi</a></li>
-                        <li><a href="#">Laporan</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <h5>Kontak</h5>
-                    <p style="color: #e0e0e0;">halo@donoxygen.com</p>
-                </div>
-            </div>
-            <div class="footer-bottom mt-4 pt-3 border-top border-secondary text-center">
-                <p class="small text-muted">© 2025 Donoxygen. All right reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const manualInput = document.getElementById('manualNominal');
-            const radioOptions = document.querySelectorAll('.nominal-option');
-            const impactTreeCount = document.getElementById('impactTreeCount');
-            const impactNominal = document.getElementById('impactNominal');
-            const impactOxygen = document.getElementById('impactOxygen');
-            const hargaPerPohon = 10000; 
-            const oksigenPerPohon = 100; 
+        const manualInput = document.getElementById('manualNominal');
+        const nominalFix = document.getElementById('nominalFix');
 
-            function updateImpact(nominal) {
-                impactNominal.textContent = new Intl.NumberFormat('id-ID').format(nominal);
-                const treeCount = Math.floor(nominal / hargaPerPohon);
-                impactTreeCount.textContent = treeCount;
-                impactOxygen.textContent = new Intl.NumberFormat('id-ID').format(treeCount * oksigenPerPohon);
-            }
+        // Format angka ke Rupiah
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID').format(angka);
+        }
 
-            radioOptions.forEach(option => {
-                option.addEventListener('change', function() {
-                    if (this.checked) {
-                        manualInput.value = this.value;
-                        updateImpact(this.value);
-                    }
-                });
+        // Hitung dampak real-time (1 Pohon = 10.000)
+        function calculateImpact(amount) {
+            let trees = Math.floor(amount / 10000);
+            if (trees < 1) trees = 1;
+            let oxygen = trees * 100; // Asumsi 1 pohon = 100 liter oksigen
+
+            document.getElementById('impactTree').innerText = trees;
+            document.getElementById('impactOxygen').innerText = formatRupiah(oxygen);
+            document.getElementById('impactNominal').innerText = formatRupiah(amount);
+        }
+
+        // Set nominal dari Badge
+        function setNominal(amount) {
+            nominalFix.value = amount;
+            manualInput.value = 'Rp ' + formatRupiah(amount);
+            calculateImpact(amount);
+            
+            // Update UI Active State
+            document.querySelectorAll('.badge-nominal').forEach(el => el.classList.remove('active'));
+            // Logic tambahan untuk highlight badge yang sesuai (opsional, perlu mapping ID)
+        }
+        
+        // Event Listener: Klik Badge
+        document.querySelectorAll('.badge-nominal').forEach(badge => {
+            badge.addEventListener('click', function() {
+                document.querySelectorAll('.badge-nominal').forEach(el => el.classList.remove('active'));
+                this.classList.add('active');
             });
+        });
 
-            manualInput.addEventListener('input', function() {
-                updateImpact(parseInt(this.value) || 0);
-                radioOptions.forEach(opt => opt.checked = false);
-            });
-            updateImpact(manualInput.value);
+        // Event Listener: Input Manual (Hanya Angka)
+        manualInput.addEventListener('keyup', function(e) {
+            let rawValue = this.value.replace(/[^0-9]/g, '');
+            if (rawValue === '') rawValue = '0';
+            let amount = parseInt(rawValue);
+            
+            nominalFix.value = amount;
+            this.value = 'Rp ' + formatRupiah(amount);
+            calculateImpact(amount);
+            
+            // Reset active state badge karena input manual custom
+            document.querySelectorAll('.badge-nominal').forEach(el => el.classList.remove('active'));
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
