@@ -1,0 +1,273 @@
+/* --- 1. Variables & Base Styles --- */
+:root {
+    --primary-green: #5AB162;
+    --dark-green-bg: #103831;
+    --light-green-bg: #E5F3E7;
+    --grey-text: #6c757d;
+    --light-grey-bg: #F0F2F5;
+    --link-blue: #3B9AE1;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+    padding-top: 80px;
+    color: #333;
+}
+
+/* --- 2. Navigation --- */
+.navbar {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 15px 0;
+}
+
+.nav-link {
+    color: #333;
+    font-weight: 500;
+    margin: 0 10px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary-green);
+    font-weight: 700;
+}
+
+.btn-donasi-sm {
+    background-color: var(--link-blue);
+    color: white;
+    border-radius: 50px;
+    padding: 8px 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    border: none;
+}
+
+.btn-donasi-sm:hover {
+    background-color: #2c7bb5;
+    color: white;
+}
+
+/* --- 3. Article Header & Meta --- */
+.article-header {
+    margin-bottom: 30px;
+}
+
+.breadcrumb-custom {
+    font-size: 0.85rem;
+    color: var(--grey-text);
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.breadcrumb-custom a {
+    text-decoration: none;
+    color: var(--grey-text);
+}
+
+.breadcrumb-custom a:hover {
+    color: var(--primary-green);
+}
+
+.breadcrumb-code {
+    color: #ccc;
+    margin-left: 10px;
+    font-size: 0.8rem;
+}
+
+.article-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #222;
+    margin-bottom: 20px;
+}
+
+.author-meta {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--grey-text);
+}
+
+.author-meta strong {
+    color: #333;
+}
+
+.dot-separator {
+    margin: 0 10px;
+    color: #ccc;
+}
+
+/* --- 4. Hero Image --- */
+.hero-image-container {
+    width: 100%;
+    height: 450px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    background-color: #eee;
+}
+
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- 5. Article Content Typography --- */
+.article-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+}
+
+.article-content p {
+    margin-bottom: 25px;
+}
+
+.article-content h4,
+.article-content h3 {
+    font-weight: 700;
+    color: #222;
+    margin-top: 40px;
+    margin-bottom: 15px;
+}
+
+.article-content blockquote {
+    border-left: 5px solid var(--primary-green);
+    background: var(--light-green-bg);
+    padding: 20px 25px;
+    border-radius: 0 10px 10px 0;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--dark-green-bg);
+    margin: 30px 0;
+}
+
+/* --- 6. Sidebar (Sticky Donation Card) --- */
+.sidebar-wrapper {
+    position: sticky;
+    top: 100px;
+}
+
+.card-donasi {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.card-donasi h5 {
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 15px;
+}
+
+.card-donasi p {
+    font-size: 0.9rem;
+    color: var(--grey-text);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.btn-donasi-cta {
+    width: 100%;
+    display: block;
+    text-align: center;
+    background-color: var(--link-blue);
+    color: white;
+    padding: 12px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-donasi-cta:hover {
+    background-color: #2c7bb5;
+    color: white;
+}
+
+/* --- 7. Related Articles --- */
+.related-section {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid #eee;
+}
+
+.related-card {
+    border: none;
+    margin-bottom: 20px;
+}
+
+.related-thumb {
+    height: 150px;
+    border-radius: 15px;
+    background-color: #eee;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 15px;
+}
+
+.related-title {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #222;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.related-title:hover {
+    color: var(--primary-green);
+}
+
+/* --- 8. Footer --- */
+footer {
+    background-color: var(--dark-green-bg);
+    color: white;
+    padding-top: 60px;
+    padding-bottom: 20px;
+}
+
+footer a {
+    color: #aaa;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: white;
+}
+
+.social-icon {
+    color: white !important;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .article-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-image-container {
+        height: 250px;
+    }
+
+    .sidebar-wrapper {
+        position: static;
+        margin-top: 40px;
+    }
+}

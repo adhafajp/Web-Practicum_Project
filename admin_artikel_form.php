@@ -90,31 +90,7 @@ if (isset($_POST['simpan'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
-    <style>
-        :root { --sidebar-bg: #0B2B1E; --active-bg: #1A3C2F; --green-brand: #4CAF50; }
-        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
-        
-        .sidebar { width: 250px; background: var(--sidebar-bg); min-height: 100vh; position: fixed; padding: 25px; color: white; }
-        .sidebar .brand { margin-bottom: 20px; display: flex; align-items: center; padding-left: 0; }
-        .sidebar .brand img { max-width: 180px; height: auto; display: block; }
-        .sidebar .brand span { color: white; font-weight: 600; }
-        
-        .nav-link { color: #A0B0A8; padding: 12px 15px; border-radius: 8px; margin-bottom: 5px; font-weight: 500; display: block; text-decoration: none; }
-        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
-        .nav-link.active { background: var(--active-bg); color: white; border-left: 4px solid var(--green-brand); }
-        
-        .main-content { margin-left: 250px; padding: 40px; }
-        .form-card { background: white; border-radius: 12px; border: 1px solid #E5E7EB; padding: 30px; }
-        .form-label { font-weight: 600; font-size: 14px; color: #374151; }
-        .form-control, .form-select { border-radius: 8px; border: 1px solid #D1D5DB; padding: 10px 15px; }
-        
-        .btn-save { background: var(--green-brand); color: white; border: none; padding: 10px 30px; border-radius: 8px; font-weight: 600; }
-        .btn-save:hover { background: #43A047; color: white; }
-        .btn-back { background: #E5E7EB; color: #374151; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; }
-        .btn-back:hover { background: #D1D5DB; color: #111; }
-
-        .img-preview { width: 100%; max-width: 300px; height: auto; border-radius: 10px; margin-top: 10px; border: 2px dashed #ddd; display: block;}
-    </style>
+    <link rel="stylesheet" href="assets/css/admin_artikel_form.css">
 </head>
 <body>
 
