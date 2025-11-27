@@ -10,7 +10,16 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     // Hapus data dari database
     $sqlDelete = "DELETE FROM articles WHERE id = $id";
     if (mysqli_query($conn, $sqlDelete)) {
-        echo "<script>alert('Artikel berhasil dihapus!'); window.location='admin_artikel.php';</script>";
+        // PERUBAHAN: Set session notifikasi dan redirect bersih
+        $_SESSION['flash_message'] = "Artikel berhasil dihapus!";
+        $_SESSION['flash_type'] = "success";
+        header("Location: admin_artikel.php");
+        exit();
+    } else {
+        $_SESSION['flash_message'] = "Gagal menghapus artikel.";
+        $_SESSION['flash_type'] = "error";
+        header("Location: admin_artikel.php");
+        exit();
     }
 }
 
@@ -35,7 +44,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;
 $start = ($page > 1) ? ($page * $limit) - $limit : 0;
 
-// Hitung total data untuk pagination
+// Hitung total data
 $sqlCount = "SELECT count(*) as total FROM articles a $whereClause";
 $resultCount = mysqli_query($conn, $sqlCount);
 $rowCount = mysqli_fetch_assoc($resultCount);
@@ -51,7 +60,7 @@ $sqlData = "SELECT a.*, u.name as author_name
             LIMIT $start, $limit";
 $result = mysqli_query($conn, $sqlData);
 
-// Parameter URL untuk pagination agar filter tetap tersimpan
+// Parameter URL untuk pagination
 $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status);
 ?>
 
@@ -64,6 +73,7 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <link rel="stylesheet" href="assets/css/admin_artikel.css">
 </head>
@@ -77,8 +87,8 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
     </div>
     <div class="small text-white-50 mb-4 px-2" style="margin-top: -10px;">Admin Dashboard</div>
     
-    <a href="admin_donasi.php" class="nav-link active">Data Donatur</a>
-    <a href="admin_artikel.php" class="nav-link">Artikel</a>
+    <a href="admin_donasi.php" class="nav-link">Data Donatur</a>
+    <a href="admin_artikel.php" class="nav-link active">Artikel</a>
 </div>
 
 <div class="main-content">
@@ -160,7 +170,11 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
                         </td>
                         <td style="text-align: right;">
                             <a href="admin_artikel_form.php?id=<?= $row['id'] ?>" class="action-btn edit" title="Edit"><i class="fa-solid fa-pen"></i></a>
-                            <a href="admin_artikel.php?action=delete&id=<?= $row['id'] ?>" class="action-btn delete" title="Hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?');"><i class="fa-solid fa-trash"></i></a>
+                            
+                            <button onclick="confirmDelete(<?= $row['id'] ?>, '<?= addslashes(htmlspecialchars($row['title'])) ?>')" class="action-btn delete border-0 bg-transparent" title="Hapus">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                            
                             <a href="detail_artikel.php?slug=<?= $row['slug'] ?>" target="_blank" class="action-btn view" title="Lihat"><i class="fa-solid fa-eye"></i></a>
                         </td>
                     </tr>
@@ -193,5 +207,42 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // 1. Script untuk Konfirmasi Hapus
+    function confirmDelete(id, title) {
+        Swal.fire({
+            title: 'Hapus Artikel?',
+            text: "Anda akan menghapus artikel: " + title,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect ke link delete PHP
+                window.location.href = 'admin_artikel.php?action=delete&id=' + id;
+            }
+        })
+    }
+
+    // 2. Script untuk Menampilkan Notifikasi Sukses dari PHP Session
+    <?php if (isset($_SESSION['flash_message'])): ?>
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: '<?= $_SESSION['flash_type'] ?>', // success or error
+            title: '<?= $_SESSION['flash_message'] ?>',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+        });
+        // Hapus session setelah ditampilkan agar tidak muncul lagi saat refresh
+        <?php unset($_SESSION['flash_message']); unset($_SESSION['flash_type']); ?>
+    <?php endif; ?>
+</script>
 </body>
 </html>

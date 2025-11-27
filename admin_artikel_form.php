@@ -11,8 +11,9 @@ $content = "";
 $thumbnail_url = "";
 $is_published = 0;
 $is_edit = false;
+$error_message = "";
 
-// Cek parameter ID untuk menentukan mode edit atau tambah baru
+// 1. Cek parameter ID untuk menentukan mode edit atau tambah baru
 if (isset($_GET['id'])) {
     $id = (int)$_GET['id'];
     $sql = "SELECT * FROM articles WHERE id = $id";
@@ -29,7 +30,7 @@ if (isset($_GET['id'])) {
     }
 }
 
-// Proses penyimpanan data (Create / Update)
+// 2. Proses penyimpanan data (Create / Update)
 if (isset($_POST['simpan'])) {
     $title_input = mysqli_real_escape_string($conn, $_POST['title']);
     $category_input = mysqli_real_escape_string($conn, $_POST['category']);
@@ -57,6 +58,8 @@ if (isset($_POST['simpan'])) {
 
     $author_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 1; 
 
+    $success = false;
+
     if ($is_edit) {
         // Update data artikel
         $sqlUpdate = "UPDATE articles SET 
@@ -67,15 +70,30 @@ if (isset($_POST['simpan'])) {
                       thumbnail_url = '$final_thumbnail',
                       is_published = '$status_input'
                       WHERE id = $id";
-        mysqli_query($conn, $sqlUpdate);
+        if(mysqli_query($conn, $sqlUpdate)) {
+            $success = true;
+        }
     } else {
         // Insert data artikel baru
         $sqlInsert = "INSERT INTO articles (title, slug, content, category, thumbnail_url, author_id, is_published) 
                       VALUES ('$title_input', '$slug_input', '$content_input', '$category_input', '$final_thumbnail', '$author_id', '$status_input')";
-        mysqli_query($conn, $sqlInsert);
+        if(mysqli_query($conn, $sqlInsert)) {
+            $success = true;
+        }
     }
 
-    echo "<script>alert('Data berhasil disimpan!'); window.location='admin_artikel.php';</script>";
+    // PERUBAHAN UTAMA DI SINI
+    if ($success) {
+        // Set pesan ke session untuk ditampilkan di halaman admin_artikel.php via SweetAlert
+        $_SESSION['flash_message'] = "Artikel berhasil disimpan!";
+        $_SESSION['flash_type'] = "success";
+        
+        // Redirect bersih (PRG Pattern)
+        header("Location: admin_artikel.php");
+        exit();
+    } else {
+        $error_message = "Gagal menyimpan data: " . mysqli_error($conn);
+    }
 }
 ?>
 
@@ -102,8 +120,8 @@ if (isset($_POST['simpan'])) {
     </div>
     <div class="small text-white-50 mb-4 px-2" style="margin-top: -10px;">Admin Dashboard</div>
     
-    <a href="admin_donasi.php" class="nav-link active">Data Donatur</a>
-    <a href="admin_artikel.php" class="nav-link">Artikel</a>
+    <a href="admin_donasi.php" class="nav-link">Data Donatur</a>
+    <a href="admin_artikel.php" class="nav-link active">Artikel</a>
 </div>
 
 <div class="main-content">
@@ -111,6 +129,13 @@ if (isset($_POST['simpan'])) {
         <h2 class="fw-bold"><?= $is_edit ? 'Edit Artikel' : 'Tulis Artikel Baru' ?></h2>
         <a href="admin_artikel.php" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
     </div>
+
+    <?php if(!empty($error_message)): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> <?= $error_message ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="form-card">
         <form action="" method="POST" enctype="multipart/form-data">
