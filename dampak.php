@@ -2,7 +2,7 @@
 // dampak.php
 include 'koneksi.php';
 
-// --- 1. LOGIKA STATISTIK DAMPAK ---
+// --- LOGIKA STATISTIK DAMPAK ---
 
 // Menggabungkan data donasi sukses dengan spesifikasi jenis pohon
 // Rumus: Jumlah Pohon * Emisi/Serapan per pohon
@@ -18,7 +18,6 @@ $result_stats = mysqli_query($conn, $query_stats);
 $stats = mysqli_fetch_assoc($result_stats);
 
 // Formatting & Konversi Satuan
-// Asumsi di DB: oxygen_emission (Liter/hari), co2_absorption (Kg/tahun)
 $total_pohon   = $stats['total_pohon'] ?? 0;
 $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
 // Konversi Kg ke Ton (bagi 1000)
@@ -27,12 +26,12 @@ $total_co2     = number_format(($stats['total_co2'] ?? 0) / 1000, 2, ',', '.');
 $lahan_pulih   = number_format(($total_pohon * 4), 0, ',', '.'); 
 
 
-// --- 2. AMBIL DATA LOKASI PENANAMAN ---
+// --- AMBIL DATA LOKASI PENANAMAN ---
 $query_loc = "SELECT * FROM locations ORDER BY planted_trees DESC LIMIT 3";
 $result_loc = mysqli_query($conn, $query_loc);
 
 
-// --- 3. AMBIL ARTIKEL TERBARU (Untuk Widget Bawah) ---
+// --- MBIL ARTIKEL TERBARU (Untuk Widget Bawah) ---
 $query_news = "SELECT * FROM articles WHERE is_published = 1 ORDER BY created_at DESC LIMIT 3";
 $result_news = mysqli_query($conn, $query_news);
 

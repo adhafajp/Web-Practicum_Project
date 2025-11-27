@@ -3,7 +3,7 @@
 session_start();
 include 'koneksi.php';
 
-// --- LOGIKA STATISTIK (REAL-TIME) ---
+// --- LOGIKA STATISTIK ---
 $query_stats = "SELECT 
     COUNT(DISTINCT d.donor_id) as total_donatur,
     SUM(d.tree_count) as total_pohon,

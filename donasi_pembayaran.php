@@ -1,13 +1,13 @@
 <?php
 session_start();
 
-// 1. Validasi Request (Hanya menerima POST dari Step 1)
+// Validasi Request (Hanya menerima POST dari Step 1)
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
     header("Location: donasi.php");
     exit;
 }
 
-// 2. Tangkap Data Input
+// Tangkap Data Input
 $nominal    = $_POST['nominal_fix'] ?? 0;
 $nama       = $_POST['nama'] ?? 'Anonim';
 $email      = $_POST['email'] ?? '-';
@@ -15,7 +15,7 @@ $hp         = $_POST['hp'] ?? '-';
 $anonim     = isset($_POST['is_anonymous']) ? 1 : 0;
 $pohon_id   = $_POST['pohon_id'] ?? 1;
 
-// 3. Konfigurasi & Logika Pohon
+// Konfigurasi & Logika Pohon
 $harga_per_pohon = 10000;
 $list_pohon = [
     1 => "Mangga",
@@ -46,7 +46,6 @@ function formatRupiah($angka){
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;700&family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- <link rel="stylesheet" href="assets/css/style.css"> -->
 
     <link rel="stylesheet" href="assets/css/donasi_pembayaran.css">
 </head>

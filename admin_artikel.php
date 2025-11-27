@@ -3,7 +3,7 @@
 session_start();
 include 'koneksi.php';
 
-// 1. Logic: Hapus Artikel
+// Logic: Hapus Artikel
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
     $id = (int)$_GET['id'];
     
@@ -44,7 +44,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     }
 }
 
-// 2. Logic: Filter Pencarian & Status
+// Logic: Filter Pencarian & Status
 $keyword = isset($_GET['keyword']) ? mysqli_real_escape_string($conn, $_GET['keyword']) : '';
 $status  = isset($_GET['status']) ? $_GET['status'] : '';
 
@@ -59,7 +59,7 @@ if ($status !== '' && $status !== 'all') {
     $whereClause .= " AND a.is_published = '$statusInt'";
 }
 
-// 3. Logic: Pagination
+// Logic: Pagination
 $limit = 5; // Jumlah data per halaman
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 if ($page < 1) $page = 1;

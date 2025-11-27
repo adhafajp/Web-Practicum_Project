@@ -2,12 +2,12 @@
 // edukasi.php
 include "koneksi.php";
 
-// 1. Konfigurasi Pagination
+// Konfigurasi Pagination
 $articles_per_page = 6;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $start_from = ($page - 1) * $articles_per_page;
 
-// 2. Logika Filter Kategori
+// Logika Filter Kategori
 $category_filter = isset($_GET['category']) ? $_GET['category'] : '';
 $where_sql = " WHERE a.is_published = 1 ";
 
@@ -19,11 +19,11 @@ if (!empty($category_filter)) {
 // Parameter URL untuk pagination
 $url_category_param = !empty($category_filter) ? "&category=" . urlencode($category_filter) : "";
 
-// 3. Ambil Daftar Kategori (Untuk Filter)
+// Ambil Daftar Kategori (Untuk Filter)
 $sql_categories = "SELECT DISTINCT category FROM articles WHERE is_published = 1 AND category != '' ORDER BY category ASC";
 $result_categories = $conn->query($sql_categories);
 
-// 4. Ambil Artikel Featured (Terbaru)
+// Ambil Artikel Featured (Terbaru)
 $sql_featured = "SELECT a.*, u.name as author_name 
                  FROM articles a 
                  JOIN users u ON a.author_id = u.id 
@@ -34,7 +34,7 @@ $result_featured = $conn->query($sql_featured);
 $featured = $result_featured->fetch_assoc();
 $featured_id = $featured ? $featured['id'] : 0;
 
-// 5. Ambil Artikel Grid (Pagination, Kecuali Featured)
+// Ambil Artikel Grid (Pagination, Kecuali Featured)
 $sql_articles = "SELECT a.*, u.name as author_name 
                  FROM articles a 
                  JOIN users u ON a.author_id = u.id 
@@ -44,7 +44,7 @@ $sql_articles = "SELECT a.*, u.name as author_name
 
 $result_articles = $conn->query($sql_articles);
 
-// 6. Hitung Total Data (Pagination)
+// Hitung Total Data (Pagination)
 $sql_count = "SELECT COUNT(*) as total FROM articles a $where_sql AND a.id != $featured_id";
 $result_count = $conn->query($sql_count);
 $row_count = $result_count->fetch_assoc();

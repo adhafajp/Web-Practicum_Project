@@ -2,9 +2,9 @@
 // laporan.php
 include "koneksi.php";
 
-// --- 1. LOGIKA KEUANGAN & STATISTIK ---
+// --- LOGIKA KEUANGAN & STATISTIK ---
 
-// A. Hitung Total Pemasukan & Jumlah Donatur
+// Hitung Total Pemasukan & Jumlah Donatur
 // Tabel: donations, Kolom: amount, payment_status
 $sql_masuk = "SELECT SUM(amount) as total_masuk, COUNT(DISTINCT donor_id) as total_donatur 
               FROM donations 
@@ -15,19 +15,14 @@ $data_masuk = $result_masuk->fetch_assoc();
 $total_masuk = $data_masuk['total_masuk'] ?? 0;
 $total_donatur = $data_masuk['total_donatur'] ?? 0;
 
-// B. Hitung Dana Disalurkan
-// CATATAN PENTING:
-// Di db.txt tidak ada tabel 'pengeluaran' (expenses).
-// Namun, ada tabel 'locations' dengan kolom 'planted_trees'. 
-// Kita bisa mengasumsikan dana tersalurkan = (Pohon Tertanam * Estimasi Harga Pohon Rata-rata)
-// Atau manual sementara 0. Di sini saya buat manual agar tidak error.
-$total_keluar = 0; // Anda bisa ubah ini atau buat tabel pengeluaran nanti.
+// Hitung Dana Disalurkan
+$total_keluar = 0;
 
-// C. Hitung Sisa Dana
+// Hitung Sisa Dana
 $sisa_dana = $total_masuk - $total_keluar;
 
 
-// --- 2. LOGIKA DAFTAR DONATUR & PENCARIAN ---
+// --- LOGIKA DAFTAR DONATUR & PENCARIAN ---
 
 // Konfigurasi Pagination
 $donors_per_page = 10;

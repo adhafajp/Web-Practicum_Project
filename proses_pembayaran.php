@@ -11,7 +11,7 @@ function cleanInput($data) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // --- 1. Pengolahan & Validasi Input ---
+    // --- Pengolahan & Validasi Input ---
     $nominal      = cleanInput($_POST['nominal'] ?? 0);
     $nama         = cleanInput($_POST['nama'] ?? '');
     $email        = cleanInput($_POST['email'] ?? '');
@@ -26,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate Invoice ID Unik
     $invoice = "INV/DNX/" . date("Ymd") . "/" . rand(1000, 9999);
 
-    // --- 2. LOGIKA UPLOAD BUKTI TRANSFER ---
-    $nama_file_bukti = null; // Default null jika tidak ada upload
+    // --- LOGIKA UPLOAD BUKTI TRANSFER ---
+    $nama_file_bukti = null;
 
     // Cek apakah ada file yang diupload dan tidak error
     if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] === 0) {
@@ -41,10 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Generate nama file baru yang unik: bukti_TIMESTAMP_RANDOM.ext
             $nama_file_bukti = "bukti_" . time() . "_" . rand(100, 999) . "." . $file_ext;
             
-            // Tentukan folder tujuan (Pastikan folder assets/uploads/ sudah dibuat)
+            // Tentukan folder tujuan
             $target_dir = "assets/uploads/";
             
-            // Buat folder jika belum ada (opsional, better manual create)
+            // Buat folder jika belum ada
             if (!is_dir($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     // ------------------------------------------------
 
-    // --- 3. Manajemen Data Donatur (Donors) ---
+    // --- Manajemen Data Donatur (Donors) ---
     $cekDonor = $conn->prepare("SELECT id FROM donors WHERE email = ?");
     $cekDonor->bind_param("s", $email);
     $cekDonor->execute();
@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // --- 4. Pencatatan Transaksi Donasi (Donations) ---
+    // --- Pencatatan Transaksi Donasi (Donations) ---
     $status = 'pending'; 
     $date_now = date("Y-m-d H:i:s");
 

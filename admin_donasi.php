@@ -3,7 +3,7 @@
 session_start();
 include 'koneksi.php';
 
-// 1. Handle Logic: Verifikasi Donasi
+// Handle Logic: Verifikasi Donasi
 if (isset($_POST['verifikasi_id'])) {
     $id = intval($_POST['verifikasi_id']);
     $status_baru = $_POST['status']; 
@@ -16,14 +16,14 @@ if (isset($_POST['verifikasi_id'])) {
     header("Location: admin_donasi.php"); exit;
 }
 
-// 2. Setup Pagination & Filter
+// Setup Pagination & Filter
 $limit = 8;
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $start = ($page - 1) * $limit;
 
 $keyword = isset($_GET['cari']) ? mysqli_real_escape_string($conn, $_GET['cari']) : '';
 
-// 3. Query Data (Hanya ambil status 'pending')
+// Query Data (Hanya ambil status 'pending')
 $sqlBase = "SELECT d.*, u.name as donor_name FROM donations d 
             JOIN donors u ON d.donor_id = u.id 
             WHERE d.payment_status = 'pending'";

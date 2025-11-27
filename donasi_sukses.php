@@ -3,7 +3,7 @@
 session_start();
 include 'koneksi.php';
 
-// 1. Inisialisasi Variabel Default
+// Inisialisasi Variabel Default
 $id_transaksi = "-";
 $tanggal      = date("d F Y");
 $metode       = "-";
@@ -12,9 +12,9 @@ $pohon        = 0;
 $oksigen      = 0;
 $nama_tampil  = "Donatur";
 
-// 2. Logika Pengambilan Data
+// Logika Pengambilan Data
 if (isset($_GET['inv'])) {
-    // A. Prioritas: Ambil data permanen dari Database via Parameter URL
+    // Prioritas: Ambil data permanen dari Database via Parameter URL
     $inv_code = urldecode($_GET['inv']);
     
     // Query join untuk mengambil data donasi & nama donatur
@@ -36,14 +36,14 @@ if (isset($_GET['inv'])) {
         $metode       = $data['payment_method'];
         $nominal      = $data['amount'];
         $pohon        = $data['tree_count'];
-        $oksigen      = $pohon * 100; // Estimasi dampak
+        $oksigen      = $pohon * 100;
         
         // Cek status anonim
         $nama_tampil = ($data['is_anonymous'] == 1) ? "Hamba Allah" : $data['nama_asli'];
     } 
 
 } elseif (isset($_SESSION['temp_invoice'])) {
-    // B. Fallback: Ambil data sementara dari Session jika URL kosong
+    // Fallback: Ambil data sementara dari Session jika URL kosong
     $id_transaksi = $_SESSION['temp_invoice'];
     $tanggal      = date("d F Y"); 
     $metode       = $_SESSION['temp_metode'] ?? "-";
@@ -53,7 +53,7 @@ if (isset($_GET['inv'])) {
     $nama_tampil  = "Donatur Dermawan"; 
 
 } else {
-    // C. Redirect jika tidak ada akses data valid
+    // Redirect jika tidak ada akses data valid
     header("Location: dashboard.php");
     exit;
 }
@@ -76,7 +76,6 @@ function formatRupiah($angka){
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;700&family=Inter:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- <link rel="stylesheet" href="assets/css/style.css"> -->
 
     <link rel="stylesheet" href="assets/css/donasi_sukses.css">
 </head>

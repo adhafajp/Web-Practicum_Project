@@ -13,7 +13,7 @@ $is_published = 0;
 $is_edit = false;
 $error_message = "";
 
-// 1. Cek parameter ID untuk menentukan mode edit atau tambah baru
+// Cek parameter ID untuk menentukan mode edit atau tambah baru
 if (isset($_GET['id'])) {
     $id = (int)$_GET['id'];
     $sql = "SELECT * FROM articles WHERE id = $id";
@@ -30,7 +30,7 @@ if (isset($_GET['id'])) {
     }
 }
 
-// 2. Proses penyimpanan data (Create / Update)
+// Proses penyimpanan data (Create / Update)
 if (isset($_POST['simpan'])) {
     $title_input = mysqli_real_escape_string($conn, $_POST['title']);
     $category_input = mysqli_real_escape_string($conn, $_POST['category']);
@@ -41,7 +41,7 @@ if (isset($_POST['simpan'])) {
     $slug_input = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $title_input)));
     
     // Logika upload gambar
-    $final_thumbnail = $thumbnail_url; // Gunakan gambar lama sebagai default
+    $final_thumbnail = $thumbnail_url;
     
     if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] == 0) {
         $target_dir = "assets/images/uploads/";
@@ -82,13 +82,10 @@ if (isset($_POST['simpan'])) {
         }
     }
 
-    // PERUBAHAN UTAMA DI SINI
     if ($success) {
-        // Set pesan ke session untuk ditampilkan di halaman admin_artikel.php via SweetAlert
         $_SESSION['flash_message'] = "Artikel berhasil disimpan!";
         $_SESSION['flash_type'] = "success";
         
-        // Redirect bersih (PRG Pattern)
         header("Location: admin_artikel.php");
         exit();
     } else {

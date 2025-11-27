@@ -4,8 +4,7 @@ include "koneksi.php";
 
 $slug = isset($_GET['slug']) ? $_GET['slug'] : '';
 
-// 1. Ambil Data Artikel Utama
-// Menggunakan prepared statement untuk keamanan
+// Ambil Data Artikel Utama
 $stmt = $conn->prepare("SELECT a.*, u.name as author_name 
                         FROM articles a 
                         JOIN users u ON a.author_id = u.id 
@@ -21,8 +20,7 @@ if (!$article) {
     exit;
 }
 
-// 2. Ambil Artikel Terkait (Related Posts)
-// Mengambil 3 artikel terbaru selain artikel yang sedang dibuka
+// Ambil Artikel Terkait (Related Posts)
 $query_related = "SELECT * FROM articles WHERE id != ? AND is_published = 1 ORDER BY created_at DESC LIMIT 3";
 $stmt_related = $conn->prepare($query_related);
 $stmt_related->bind_param("i", $article['id']);

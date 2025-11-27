@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) { header("Location: dashboard.php"); exit; }
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'] ?? '';
 
-    // --- 1. PROSES LOGIN ---
+    // --- PROSES LOGIN ---
     if ($action === 'login') {
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -47,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $msg_type = "danger";
         }
     
-    // --- 2. PROSES REGISTRASI ---
+    // --- PROSES REGISTRASI ---
     } elseif ($action === 'register') {
         $nama = $_POST['nama_lengkap'];
         $email = $_POST['email_register'];
