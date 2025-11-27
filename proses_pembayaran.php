@@ -11,7 +11,6 @@ function cleanInput($data) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // --- Pengolahan & Validasi Input ---
     $nominal      = cleanInput($_POST['nominal'] ?? 0);
     $nama         = cleanInput($_POST['nama'] ?? '');
     $email        = cleanInput($_POST['email'] ?? '');
@@ -31,30 +30,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Cek apakah ada file yang diupload dan tidak error
     if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] === 0) {
-        $allowed_extensions = ['jpg', 'jpeg', 'png'];
+        
         $file_name = $_FILES['bukti_transfer']['name'];
         $file_tmp  = $_FILES['bukti_transfer']['tmp_name'];
         $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        // Validasi ekstensi file
-        if (in_array($file_ext, $allowed_extensions)) {
-            // Generate nama file baru yang unik: bukti_TIMESTAMP_RANDOM.ext
+        $allowed_extensions = [
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 
+            'bmp', 'svg', 'tiff', 'tif', 'ico', 'heic'
+        ];
+
+        // CEK MIME TYPE
+        // Fungsi ini membaca header file untuk mengetahui tipe aslinya
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file_tmp);
+        finfo_close($finfo);
+
+        if (in_array($file_ext, $allowed_extensions) && strpos($mime_type, 'image/') === 0) {
+            
             $nama_file_bukti = "bukti_" . time() . "_" . rand(100, 999) . "." . $file_ext;
             
-            // Tentukan folder tujuan
             $target_dir = "assets/uploads/";
             
-            // Buat folder jika belum ada
             if (!is_dir($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
 
-            // Pindahkan file dari temp ke folder tujuan
             if (!move_uploaded_file($file_tmp, $target_dir . $nama_file_bukti)) {
-                die("Error: Gagal mengupload gambar.");
+                die("Error: Gagal mengupload gambar. Periksa izin folder.");
             }
         } else {
-            die("Error: Format file tidak didukung (Hanya JPG, JPEG, PNG).");
+            die("Error: Format file tidak valid. Harap upload file gambar (JPG, PNG, GIF, WEBP, dll).");
         }
     }
     // ------------------------------------------------
@@ -87,21 +93,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = 'pending'; 
     $date_now = date("Y-m-d H:i:s");
 
-    // Query INSERT diperbarui untuk menyimpan payment_proof
     $stmtDonasi = $conn->prepare("INSERT INTO donations (invoice_number, donor_id, tree_type_id, amount, tree_count, payment_method, is_anonymous, payment_status, payment_proof, transaction_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
-    /* Urutan Binding Parameter:
-       s - invoice
-       i - donor_id
-       i - tree_type_id
-       d - amount
-       i - tree_count
-       s - payment_method
-       i - is_anonymous
-       s - payment_status
-       s - payment_proof (BARU)
-       s - transaction_date
-    */
     $stmtDonasi->bind_param("siidisisss", $invoice, $donor_id, $pohon_id, $nominal, $jumlah_pohon, $metode, $anonim, $status, $nama_file_bukti, $date_now);
     
     if ($stmtDonasi->execute()) {

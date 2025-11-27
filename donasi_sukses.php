@@ -97,11 +97,11 @@ function formatRupiah($angka){
             <div class="col-md-8">
                 
                 <div class="step-label">Step 3 of 3</div>
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="progress-bar-container mb-0">
+                <div class="d-flex justify-content-between align-items-center mb-5">
+                    <div class="progress-bar-container mb-0 flex-grow-1">
                         <div class="progress-bar-fill"></div>
                     </div>
-                    <span class="small text-muted">Selesai</span>
+                    <span class="small text-muted flex-shrink-0"></span>
                 </div>
 
                 <div class="success-icon-wrapper">
