@@ -7,11 +7,32 @@ include 'koneksi.php';
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
     $id = (int)$_GET['id'];
     
+    // Ambil nama file/url gambar dari database sebelum row dihapus
+    $sqlGetImage = "SELECT thumbnail_url FROM articles WHERE id = $id";
+    $resultImage = mysqli_query($conn, $sqlGetImage);
+    
+    if ($resultImage && mysqli_num_rows($resultImage) > 0) {
+        $rowImage = mysqli_fetch_assoc($resultImage);
+        $gambar = $rowImage['thumbnail_url'];
+
+        // Cek: Apakah $gambar tidak kosong?
+        if (!empty($gambar)) {
+            if (!filter_var($gambar, FILTER_VALIDATE_URL)) {
+                
+                // Cek: Apakah file fisik benar-benar ada di folder?
+                if (file_exists($gambar)) {
+                    unlink($gambar); // Perintah untuk menghapus file
+                } 
+                elseif (file_exists("uploads/" . $gambar)) { unlink("uploads/" . $gambar); }
+            }
+        }
+    }
+
     // Hapus data dari database
     $sqlDelete = "DELETE FROM articles WHERE id = $id";
     if (mysqli_query($conn, $sqlDelete)) {
         // PERUBAHAN: Set session notifikasi dan redirect bersih
-        $_SESSION['flash_message'] = "Artikel berhasil dihapus!";
+        $_SESSION['flash_message'] = "Artikel dan gambar berhasil dihapus!";
         $_SESSION['flash_type'] = "success";
         header("Location: admin_artikel.php");
         exit();
