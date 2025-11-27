@@ -2,10 +2,6 @@
 session_start();
 include "koneksi.php";
 
-/**
- * Helper: Sanitasi input pengguna untuk keamanan dasar (XSS Prevention).
- * Catatan: SQL Injection sudah ditangani oleh Prepared Statements.
- */
 function cleanInput($data) {
     $data = trim($data);
     $data = stripslashes($data);
@@ -13,7 +9,6 @@ function cleanInput($data) {
     return $data;
 }
 
-// Pastikan skrip hanya berjalan pada method POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     // --- 1. Pengolahan & Validasi Input ---
@@ -24,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $alamat       = cleanInput($_POST['alamat'] ?? '-');
     $metode       = cleanInput($_POST['metode_bayar'] ?? '-');
     
-    // Casting ke integer untuk data numerik
     $anonim       = (int) ($_POST['anonim'] ?? 0); 
     $pohon_id     = (int) ($_POST['pohon_id'] ?? 1);
     $jumlah_pohon = (int) ($_POST['jumlah_pohon'] ?? 1);
@@ -32,15 +26,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Generate Invoice ID Unik
     $invoice = "INV/DNX/" . date("Ymd") . "/" . rand(1000, 9999);
 
-    // --- 2. Manajemen Data Donatur (Donors) ---
-    // Cek apakah email sudah terdaftar dalam sistem
+    // --- 2. LOGIKA UPLOAD BUKTI TRANSFER ---
+    $nama_file_bukti = null; // Default null jika tidak ada upload
+
+    // Cek apakah ada file yang diupload dan tidak error
+    if (isset($_FILES['bukti_transfer']) && $_FILES['bukti_transfer']['error'] === 0) {
+        $allowed_extensions = ['jpg', 'jpeg', 'png'];
+        $file_name = $_FILES['bukti_transfer']['name'];
+        $file_tmp  = $_FILES['bukti_transfer']['tmp_name'];
+        $file_ext  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        // Validasi ekstensi file
+        if (in_array($file_ext, $allowed_extensions)) {
+            // Generate nama file baru yang unik: bukti_TIMESTAMP_RANDOM.ext
+            $nama_file_bukti = "bukti_" . time() . "_" . rand(100, 999) . "." . $file_ext;
+            
+            // Tentukan folder tujuan (Pastikan folder assets/uploads/ sudah dibuat)
+            $target_dir = "assets/uploads/";
+            
+            // Buat folder jika belum ada (opsional, better manual create)
+            if (!is_dir($target_dir)) {
+                mkdir($target_dir, 0777, true);
+            }
+
+            // Pindahkan file dari temp ke folder tujuan
+            if (!move_uploaded_file($file_tmp, $target_dir . $nama_file_bukti)) {
+                die("Error: Gagal mengupload gambar.");
+            }
+        } else {
+            die("Error: Format file tidak didukung (Hanya JPG, JPEG, PNG).");
+        }
+    }
+    // ------------------------------------------------
+
+    // --- 3. Manajemen Data Donatur (Donors) ---
     $cekDonor = $conn->prepare("SELECT id FROM donors WHERE email = ?");
     $cekDonor->bind_param("s", $email);
     $cekDonor->execute();
     $resDonor = $cekDonor->get_result();
 
     if ($resDonor->num_rows > 0) {
-        // Donatur lama: Perbarui data kontak terbaru
         $row = $resDonor->fetch_assoc();
         $donor_id = $row['id'];
         
@@ -48,38 +73,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateDonor->bind_param("ssi", $nama, $hp, $donor_id);
         $updateDonor->execute();
     } else {
-        // Donatur baru: Buat data baru
         $stmtDonor = $conn->prepare("INSERT INTO donors (name, email, phone) VALUES (?, ?, ?)");
         $stmtDonor->bind_param("sss", $nama, $email, $hp);
         
         if ($stmtDonor->execute()) {
             $donor_id = $conn->insert_id;
         } else {
-            // Log error jika diperlukan di lingkungan production
             die("Error: Gagal menyimpan data donatur.");
         }
     }
 
-    // --- 3. Pencatatan Transaksi Donasi (Donations) ---
-    // Status default 'success' untuk simulasi. Gunakan 'pending' jika terintegrasi Payment Gateway.
-    $status = 'success'; 
+    // --- 4. Pencatatan Transaksi Donasi (Donations) ---
+    $status = 'pending'; 
     $date_now = date("Y-m-d H:i:s");
 
-    $stmtDonasi = $conn->prepare("INSERT INTO donations (invoice_number, donor_id, tree_type_id, amount, tree_count, payment_method, is_anonymous, payment_status, transaction_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // Query INSERT diperbarui untuk menyimpan payment_proof
+    $stmtDonasi = $conn->prepare("INSERT INTO donations (invoice_number, donor_id, tree_type_id, amount, tree_count, payment_method, is_anonymous, payment_status, payment_proof, transaction_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     
-    // Parameter Binding: s=string, i=integer, d=double
-    $stmtDonasi->bind_param("siidisiss", $invoice, $donor_id, $pohon_id, $nominal, $jumlah_pohon, $metode, $anonim, $status, $date_now);
+    /* Urutan Binding Parameter:
+       s - invoice
+       i - donor_id
+       i - tree_type_id
+       d - amount
+       i - tree_count
+       s - payment_method
+       i - is_anonymous
+       s - payment_status
+       s - payment_proof (BARU)
+       s - transaction_date
+    */
+    $stmtDonasi->bind_param("siidisisss", $invoice, $donor_id, $pohon_id, $nominal, $jumlah_pohon, $metode, $anonim, $status, $nama_file_bukti, $date_now);
     
     if ($stmtDonasi->execute()) {
-        // Redirect ke halaman sukses dengan membawa ID Invoice
-        header("Location: sukses_donasi.php?inv=" . urlencode($invoice));
+        header("Location: donasi_sukses.php?inv=" . urlencode($invoice));
         exit;
     } else {
         die("Error: Gagal memproses donasi. Silakan coba lagi.");
     }
 
 } else {
-    // Redirect jika akses langsung tanpa POST
     header("Location: donasi.php");
     exit;
 }

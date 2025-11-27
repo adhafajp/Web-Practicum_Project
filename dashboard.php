@@ -193,6 +193,16 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 15px; min-width: 200px;">
                             <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted">Akun Anda</h6></li>
                             <li><span class="dropdown-item-text text-truncate fw-medium text-dark"><?= $_SESSION['user_name'] ?? 'User' ?></span></li>
+                            
+                            <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+                                <li><hr class="dropdown-divider my-2"></li>
+                                <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted">Menu Admin</h6></li>
+                                <li>
+                                    <a class="dropdown-item rounded fw-medium py-2" href="admin_donasi.php">
+                                        <i class="fa-solid fa-user-gear me-2 text-primary"></i>Kelola Donasi
+                                    </a>
+                                </li>
+                            <?php endif; ?>
                             <li><hr class="dropdown-divider my-2"></li>
                             <li>
                                 <a class="dropdown-item rounded text-danger fw-medium py-2" href="logout.php">

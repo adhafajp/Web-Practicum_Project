@@ -110,7 +110,9 @@ $result = mysqli_query($conn, $sqlData);
 
 <div class="sidebar">
     <div class="brand">
-        <img src="assets/images/logo-donoxygen.svg" alt="Logo Donoxygen">
+        <a href="dashboard.php" style="text-decoration: none;">
+            <img src="assets/images/logo-donoxygen.svg" alt="Logo Donoxygen">
+        </a>
     </div>
     <div class="small text-white-50 mb-4 px-2" style="margin-top: -10px;">Admin Dashboard</div>
     
@@ -174,14 +176,26 @@ $result = mysqli_query($conn, $sqlData);
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <?php if(!empty($row['payment_proof'])): ?>
-                                <img src="uploads/<?= $row['payment_proof'] ?>" alt="Bukti Transfer" class="img-fluid rounded shadow-sm" style="max-height: 400px;">
+                            
+                            <?php 
+                                // Cek apakah data payment_proof ada di database
+                                $bukti = $row['payment_proof']; 
+                                $path_bukti = "assets/uploads/" . $bukti;
+                            ?>
+
+                            <?php if(!empty($bukti) && file_exists($path_bukti)): ?>
+                                <img src="<?= $path_bukti ?>" alt="Bukti Transfer" class="img-fluid rounded shadow-sm" style="max-height: 400px; width: auto;">
+                                <a href="<?= $path_bukti ?>" target="_blank" class="btn btn-sm btn-outline-secondary mt-3">
+                                    <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Penuh
+                                </a>
                             <?php else: ?>
-                                <div class="py-5 text-muted bg-light rounded">
-                                    <i class="fa-solid fa-image-slash fa-2x mb-2"></i><br>
-                                    Tidak ada bukti transfer dilampirkan.
+                                <div class="py-5 text-muted bg-light rounded border border-dashed">
+                                    <i class="fa-solid fa-image-slash fa-3x mb-3 text-secondary"></i><br>
+                                    <span class="fw-bold">Tidak ada bukti transfer</span><br>
+                                    <small>User mungkin tidak mengupload gambar atau file rusak.</small>
                                 </div>
                             <?php endif; ?>
+
                         </div>
                     </div>
                 </div>

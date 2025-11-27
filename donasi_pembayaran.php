@@ -240,7 +240,7 @@ function formatRupiah($angka){
                                 <div class="radio-circle"></div>
                                 <div>
                                     <span class="bank-name">Gopay</span>
-                                    <span class="bank-number">083894159607</span>
+                                    <span class="bank-number">089516656371</span>
                                     <div class="bank-owner">a.n Farelino</div>
                                 </div>
                             </div>
@@ -253,7 +253,7 @@ function formatRupiah($angka){
                                 <div>
                                     <span class="bank-name">Shopeepay</span>
                                     <span class="bank-number">083894159607</span>
-                                    <div class="bank-owner">Adhafa JP</div>
+                                    <div class="bank-owner">Kelfin Farelno</div>
                                 </div>
                             </div>
                         </label>

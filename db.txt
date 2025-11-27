@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 27, 2025 at 01:26 PM
+-- Generation Time: Nov 27, 2025 at 01:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -67,6 +67,7 @@ CREATE TABLE `donations` (
   `amount` decimal(15,2) NOT NULL,
   `tree_count` int(11) DEFAULT 0,
   `payment_status` enum('pending','success','failed','expired') DEFAULT 'pending',
+  `payment_proof` varchar(255) DEFAULT NULL,
   `payment_method` varchar(50) DEFAULT NULL,
   `is_anonymous` tinyint(1) DEFAULT 0,
   `message` text DEFAULT NULL,
@@ -77,12 +78,15 @@ CREATE TABLE `donations` (
 -- Dumping data for table `donations`
 --
 
-INSERT INTO `donations` (`id`, `invoice_number`, `donor_id`, `tree_type_id`, `amount`, `tree_count`, `payment_status`, `payment_method`, `is_anonymous`, `message`, `transaction_date`) VALUES
-(1, 'INV/2025/001', 1, 1, 100000.00, 2, 'success', 'gopay', 0, 'Semoga bermanfaat bagi bumi!', '2025-11-24 11:55:01'),
-(2, 'INV/2025/002', 2, 2, 35000.00, 1, 'pending', 'bank_transfer', 0, 'Bismillah.', '2025-11-24 11:55:01'),
-(3, 'INV/DNX/20251127/8632', 3, 1, 100000.00, 10, 'success', 'SeaBank - Farelino', 0, NULL, '2025-11-27 05:14:46'),
-(4, 'INV/DNX/20251127/4953', 4, 1, 20000.00, 2, 'success', 'QRIS', 1, NULL, '2025-11-27 05:39:22'),
-(5, 'INV/DNX/20251127/2702', 3, 3, 20000.00, 2, 'success', 'SeaBank - Farelino', 1, NULL, '2025-11-27 11:51:34');
+INSERT INTO `donations` (`id`, `invoice_number`, `donor_id`, `tree_type_id`, `amount`, `tree_count`, `payment_status`, `payment_proof`, `payment_method`, `is_anonymous`, `message`, `transaction_date`) VALUES
+(1, 'INV/2025/001', 1, 1, 100000.00, 2, 'success', NULL, 'gopay', 0, 'Semoga bermanfaat bagi bumi!', '2025-11-24 11:55:01'),
+(2, 'INV/2025/002', 2, 2, 35000.00, 1, 'pending', NULL, 'bank_transfer', 0, 'Bismillah.', '2025-11-24 11:55:01'),
+(3, 'INV/DNX/20251127/8632', 3, 1, 100000.00, 10, 'success', NULL, 'SeaBank - Farelino', 0, NULL, '2025-11-27 05:14:46'),
+(4, 'INV/DNX/20251127/4953', 4, 1, 20000.00, 2, 'success', NULL, 'QRIS', 1, NULL, '2025-11-27 05:39:22'),
+(5, 'INV/DNX/20251127/2702', 3, 3, 20000.00, 2, 'success', NULL, 'SeaBank - Farelino', 1, NULL, '2025-11-27 11:51:34'),
+(6, 'INV/DNX/20251127/7961', 5, 2, 500000.00, 50, 'success', NULL, 'QRIS', 0, NULL, '2025-11-27 13:32:29'),
+(9, 'INV/DNX/20251127/6440', 6, 3, 1000000.00, 100, 'success', NULL, 'BNI - Adhafa Putranto', 0, NULL, '2025-11-27 13:39:41'),
+(10, 'INV/DNX/20251127/6503', 7, 1, 20000.00, 2, 'pending', 'bukti_1764247721_481.jpeg', 'Mandiri - Adhafa Joan', 0, NULL, '2025-11-27 13:48:41');
 
 -- --------------------------------------------------------
 
@@ -107,7 +111,10 @@ INSERT INTO `donors` (`id`, `name`, `email`, `phone`, `address`, `created_at`) V
 (1, 'Adhafa Joan', 'adhafa@email.com', '08123456789', NULL, '2025-11-24 04:54:59'),
 (2, 'Kelfin Farelino', 'kelfin@email.com', '08987654321', NULL, '2025-11-24 04:54:59'),
 (3, 'Adhafa Joan Putranto 2', 'adhafa.j.p@gmail.com', '086969696969', NULL, '2025-11-27 04:10:05'),
-(4, 'Adhafa Joan Putranto', 'adhafajoanp9999@gmail.com', '088706731973', NULL, '2025-11-27 04:39:22');
+(4, 'Adhafa Joan Putranto', 'adhafajoanp9999@gmail.com', '088706731973', NULL, '2025-11-27 04:39:22'),
+(5, 'Monkey D Luffy', 'monkey@test.com', '089969996999', NULL, '2025-11-27 12:32:29'),
+(6, 'Dragon D Monkey', 'dragon@test.ocm', '08123123123', NULL, '2025-11-27 12:39:41'),
+(7, 'A', 'adhafanoob9999@gmail.com', '088706731973', NULL, '2025-11-27 12:48:41');
 
 -- --------------------------------------------------------
 
@@ -267,13 +274,13 @@ ALTER TABLE `articles`
 -- AUTO_INCREMENT for table `donations`
 --
 ALTER TABLE `donations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `donors`
 --
 ALTER TABLE `donors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `locations`

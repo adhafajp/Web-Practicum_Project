@@ -120,7 +120,9 @@ $urlParams = "&keyword=" . urlencode($keyword) . "&status=" . urlencode($status)
 
 <div class="sidebar">
     <div class="brand">
-        <img src="assets/images/logo-donoxygen.svg" alt="Logo Donoxygen">
+        <a href="dashboard.php" style="text-decoration: none;">
+            <img src="assets/images/logo-donoxygen.svg" alt="Logo Donoxygen">
+        </a>
     </div>
     <div class="small text-white-50 mb-4 px-2" style="margin-top: -10px;">Admin Dashboard</div>
     

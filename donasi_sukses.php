@@ -1,5 +1,5 @@
 <?php
-// sukses_donasi.php
+// donasi_sukses.php
 session_start();
 include 'koneksi.php';
 
