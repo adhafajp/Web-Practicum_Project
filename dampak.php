@@ -21,9 +21,9 @@ $stats = mysqli_fetch_assoc($result_stats);
 $total_pohon   = $stats['total_pohon'] ?? 0;
 $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
 // Konversi Kg ke Ton (bagi 1000)
-$total_co2     = number_format(($stats['total_co2'] ?? 0) / 1000, 2, ',', '.'); 
+$total_co2     = number_format(($stats['total_co2'] ?? 0) / 1000, 2, ',', '.');
 // Estimasi: 1 pohon ~ 4m² lahan (Asumsi jarak tanam 2x2 meter)
-$lahan_pulih   = number_format(($total_pohon * 4), 0, ',', '.'); 
+$lahan_pulih   = number_format(($total_pohon * 4), 0, ',', '.');
 
 
 // --- AMBIL DATA LOKASI PENANAMAN ---
@@ -36,29 +36,32 @@ $query_news = "SELECT * FROM articles WHERE is_published = 1 ORDER BY created_at
 $result_news = mysqli_query($conn, $query_news);
 
 // Helper: Potong Teks
-function limit_text_dampak($text, $limit) {
+function limit_text_dampak($text, $limit)
+{
     if (str_word_count($text, 0) > $limit) {
         $words = str_word_count($text, 2);
         $pos   = array_keys($words);
         $text  = substr($text, 0, $pos[$limit]) . '...';
     }
-    return strip_tags($text); 
+    return strip_tags($text);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dampak Nyata - Donoxygen</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="assets/css/dampak.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
@@ -75,10 +78,10 @@ function limit_text_dampak($text, $limit) {
                     <li class="nav-item"><a class="nav-link" href="donasi.php">Donasi</a></li>
                     <li class="nav-item"><a class="nav-link active" href="dampak.php">Dampak</a></li>
                     <li class="nav-item"><a class="nav-link" href="laporan.php">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li> 
+                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li>
                 </ul>
             </div>
-             <div class="d-flex">
+            <div class="d-flex">
                 <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
             </div>
         </div>
@@ -94,7 +97,7 @@ function limit_text_dampak($text, $limit) {
                     <p class="text-muted mt-3" style="max-width: 90%;">
                         Setiap donasi Anda bukan sekadar angka, tapi liter oksigen yang kita hirup dan karbon yang diserap dari atmosfer.
                     </p>
-                    
+
                     <div class="impact-big-stat">
                         <?= $total_oksigen ?> <span style="font-size: 1.2rem; color: #555; font-weight: 500;">Liter Oksigen / Hari</span>
                     </div>
@@ -110,7 +113,7 @@ function limit_text_dampak($text, $limit) {
                     </div>
                 </div>
                 <div class="col-lg-4 text-center d-none d-lg-block">
-                     <i class="fa-solid fa-earth-asia" style="font-size: 9rem; color: rgba(90, 177, 98, 0.2);"></i>
+                    <i class="fa-solid fa-earth-asia" style="font-size: 9rem; color: rgba(90, 177, 98, 0.2);"></i>
                 </div>
             </div>
         </section>
@@ -124,29 +127,29 @@ function limit_text_dampak($text, $limit) {
             </div>
 
             <div class="row g-4">
-                <?php if(mysqli_num_rows($result_loc) > 0): ?>
-                    <?php while($loc = mysqli_fetch_assoc($result_loc)): ?>
-                        <?php 
-                            $percent = ($loc['target_trees'] > 0) ? ($loc['planted_trees'] / $loc['target_trees']) * 100 : 0;
-                            $percent = min(100, $percent); // Max 100%
+                <?php if (mysqli_num_rows($result_loc) > 0): ?>
+                    <?php while ($loc = mysqli_fetch_assoc($result_loc)): ?>
+                        <?php
+                        $percent = ($loc['target_trees'] > 0) ? ($loc['planted_trees'] / $loc['target_trees']) * 100 : 0;
+                        $percent = min(100, $percent); // Max 100%
                         ?>
-                    <div class="col-md-4">
-                        <div class="custom-card">
-                            <img src="<?= !empty($loc['image_url']) ? $loc['image_url'] : 'assets/images/placeholder_loc.jpg' ?>" class="card-img-top-custom" alt="<?= htmlspecialchars($loc['name']) ?>">
-                            <div class="card-body-custom">
-                                <h5 class="fw-bold mb-2"><?= htmlspecialchars($loc['name']) ?></h5>
-                                <p class="text-muted small mb-3"><?= limit_text_dampak($loc['description'], 12) ?></p>
-                                
-                                <div class="d-flex justify-content-between small fw-bold text-dark">
-                                    <span>Terkumpul: <?= number_format($loc['planted_trees']) ?></span>
-                                    <span>Target: <?= number_format($loc['target_trees']) ?></span>
-                                </div>
-                                <div class="progress progress-custom">
-                                    <div class="progress-bar progress-bar-custom" role="progressbar" style="width: <?= $percent ?>%"></div>
+                        <div class="col-md-4">
+                            <div class="custom-card">
+                                <img src="<?= !empty($loc['image_url']) ? $loc['image_url'] : 'assets/images/placeholder_loc.jpg' ?>" class="card-img-top-custom" alt="<?= htmlspecialchars($loc['name']) ?>">
+                                <div class="card-body-custom">
+                                    <h5 class="fw-bold mb-2"><?= htmlspecialchars($loc['name']) ?></h5>
+                                    <p class="text-muted small mb-3"><?= limit_text_dampak($loc['description'], 12) ?></p>
+
+                                    <div class="d-flex justify-content-between small fw-bold text-dark">
+                                        <span>Terkumpul: <?= number_format($loc['planted_trees']) ?></span>
+                                        <span>Target: <?= number_format($loc['target_trees']) ?></span>
+                                    </div>
+                                    <div class="progress progress-custom">
+                                        <div class="progress-bar progress-bar-custom" role="progressbar" style="width: <?= $percent ?>%"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <div class="col-12 text-center text-muted py-5">Belum ada data lokasi.</div>
@@ -157,26 +160,26 @@ function limit_text_dampak($text, $limit) {
         <section class="mb-5">
             <h3 class="fw-bold mb-4" style="color: #222;">Wawasan Lingkungan</h3>
             <div class="row g-4">
-                <?php while($art = mysqli_fetch_assoc($result_news)): ?>
-                <div class="col-md-4">
-                    <div class="custom-card">
-                         <div style="height: 180px; background-image: url('<?= !empty($art['thumbnail_url']) ? $art['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>'); background-size: cover; background-position: center;"></div>
-                        <div class="card-body-custom d-flex flex-column">
-                            <div class="small text-success fw-bold text-uppercase mb-2" style="font-size: 0.75rem;"><?= htmlspecialchars($art['category']) ?></div>
-                            <h5 class="fw-bold mb-2" style="font-size: 1.1rem;"><?= htmlspecialchars($art['title']) ?></h5>
-                            <p class="text-muted small flex-grow-1"><?= limit_text_dampak($art['content'], 15) ?></p>
-                            <a href="edukasi.php" class="text-decoration-none fw-bold text-dark mt-3" style="font-size: 0.9rem;">
-                                Baca Artikel <i class="fa-solid fa-arrow-right ms-1 text-success"></i>
-                            </a>
+                <?php while ($art = mysqli_fetch_assoc($result_news)): ?>
+                    <div class="col-md-4">
+                        <div class="custom-card">
+                            <div style="height: 180px; background-image: url('<?= !empty($art['thumbnail_url']) ? $art['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>'); background-size: cover; background-position: center;"></div>
+                            <div class="card-body-custom d-flex flex-column">
+                                <div class="small text-success fw-bold text-uppercase mb-2" style="font-size: 0.75rem;"><?= htmlspecialchars($art['category']) ?></div>
+                                <h5 class="fw-bold mb-2" style="font-size: 1.1rem;"><?= htmlspecialchars($art['title']) ?></h5>
+                                <p class="text-muted small flex-grow-1"><?= limit_text_dampak($art['content'], 15) ?></p>
+                                <a href="edukasi.php" class="text-decoration-none fw-bold text-dark mt-3" style="font-size: 0.9rem;">
+                                    Baca Artikel <i class="fa-solid fa-arrow-right ms-1 text-success"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 <?php endwhile; ?>
             </div>
         </section>
 
         <section class="mb-5">
-             <div style="background-color: #D1E7D6; padding: 40px; border-radius: var(--border-radius-card); display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background-color: #D1E7D6; padding: 40px; border-radius: var(--border-radius-card); display: flex; flex-direction: column; align-items: center; text-align: center;">
                 <h4 class="fw-bold mb-2" style="color: var(--dark-green-bg);">Jadikan Wawasan Ini Nyata</h4>
                 <p class="text-muted mb-4" style="max-width: 600px;">Pengetahuan tanpa aksi hanyalah potensi. Ubah kepedulian Anda menjadi pohon nyata sekarang juga.</p>
                 <a href="donasi.php" class="btn btn-green btn-donasi-sm px-5 py-2">Donasi Pohon</a>
@@ -201,7 +204,7 @@ function limit_text_dampak($text, $limit) {
                         <li><a href="laporan.php">Laporan</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-6">
+                <div class="col-lg-2 col-md-6 col-6">
                     <h5>Edukasi</h5>
                     <ul class="list-unstyled">
                         <li><a href="edukasi.php">Artikel</a></li>
@@ -234,4 +237,5 @@ function limit_text_dampak($text, $limit) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

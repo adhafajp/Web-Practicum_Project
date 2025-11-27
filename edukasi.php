@@ -51,29 +51,32 @@ $row_count = $result_count->fetch_assoc();
 $total_pages = ceil($row_count['total'] / $articles_per_page);
 
 // Helper: Potong Teks
-function limit_text($text, $limit) {
+function limit_text($text, $limit)
+{
     if (str_word_count($text, 0) > $limit) {
         $words = str_word_count($text, 2);
         $pos   = array_keys($words);
         $text  = substr($text, 0, $pos[$limit]) . '...';
     }
-    return strip_tags($text); 
+    return strip_tags($text);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donasi Oksigen - Wawasan Hijau & Edukasi</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="assets/css/edukasi.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
@@ -90,10 +93,10 @@ function limit_text($text, $limit) {
                     <li class="nav-item"><a class="nav-link" href="donasi.php">Donasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="dampak.php">Dampak</a></li>
                     <li class="nav-item"><a class="nav-link" href="laporan.php">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="edukasi.php">Edukasi</a></li> 
+                    <li class="nav-item"><a class="nav-link active" href="edukasi.php">Edukasi</a></li>
                 </ul>
             </div>
-             <div class="d-flex">
+            <div class="d-flex">
                 <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
             </div>
         </div>
@@ -111,44 +114,44 @@ function limit_text($text, $limit) {
             </div>
         </section>
 
-        <?php if($featured): ?>
-        <h6 class="text-muted mb-4 fw-bold" style="font-size: 0.9rem;">
-            <?= empty($category_filter) ? "Artikel Pilihan Minggu Ini" : "Artikel Pilihan di Topik Ini" ?>
-        </h6>
-        <section class="featured-card">
-            <div class="row g-0">
-                <div class="col-lg-6 featured-img-col d-none d-lg-block" 
-                     style="background-image: url('<?= !empty($featured['thumbnail_url']) ? $featured['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');">
-                </div>
-                
-                <div class="col-lg-6">
-                    <div class="featured-content">
-                        <span class="badge-featured">Featured</span>
-                        <div class="meta-tag text-success mb-2"><?= htmlspecialchars($featured['category']) ?></div>
-                        <h2 class="mb-3 fw-bold" style="font-size: 1.8rem;"><?= htmlspecialchars($featured['title']) ?></h2>
-                        <p class="text-muted mb-4">
-                            <?= limit_text($featured['content'], 25) ?>
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mt-5">
-                            <small class="text-muted">Dipublikasikan: <?= date('d M Y', strtotime($featured['created_at'])) ?></small>
-                            <a href="detail_artikel.php?slug=<?= $featured['slug'] ?>" class="btn btn-donasi-sm btn-green px-4">Baca Artikel</a>
+        <?php if ($featured): ?>
+            <h6 class="text-muted mb-4 fw-bold" style="font-size: 0.9rem;">
+                <?= empty($category_filter) ? "Artikel Pilihan Minggu Ini" : "Artikel Pilihan di Topik Ini" ?>
+            </h6>
+            <section class="featured-card">
+                <div class="row g-0">
+                    <div class="col-lg-6 featured-img-col d-none d-lg-block"
+                        style="background-image: url('<?= !empty($featured['thumbnail_url']) ? $featured['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');">
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="featured-content">
+                            <span class="badge-featured">Featured</span>
+                            <div class="meta-tag text-success mb-2"><?= htmlspecialchars($featured['category']) ?></div>
+                            <h2 class="mb-3 fw-bold" style="font-size: 1.8rem;"><?= htmlspecialchars($featured['title']) ?></h2>
+                            <p class="text-muted mb-4">
+                                <?= limit_text($featured['content'], 25) ?>
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-5">
+                                <small class="text-muted">Dipublikasikan: <?= date('d M Y', strtotime($featured['created_at'])) ?></small>
+                                <a href="detail_artikel.php?slug=<?= $featured['slug'] ?>" class="btn btn-donasi-sm btn-green px-4">Baca Artikel</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
         <?php else: ?>
             <div class="alert alert-info">Belum ada artikel yang dipublikasikan di kategori ini.</div>
         <?php endif; ?>
 
         <section class="topic-filter mb-5">
             <a href="edukasi.php" class="badge-pill <?= empty($category_filter) ? 'active' : '' ?>">Semua Topik</a>
-            <?php if($result_categories->num_rows > 0): ?>
-                <?php while($cat = $result_categories->fetch_assoc()): ?>
-                    <?php 
-                        $nama_kat = $cat['category'];
-                        $is_active = ($category_filter === $nama_kat) ? 'active' : '';
-                        $link_kat = "?category=" . urlencode($nama_kat);
+            <?php if ($result_categories->num_rows > 0): ?>
+                <?php while ($cat = $result_categories->fetch_assoc()): ?>
+                    <?php
+                    $nama_kat = $cat['category'];
+                    $is_active = ($category_filter === $nama_kat) ? 'active' : '';
+                    $link_kat = "?category=" . urlencode($nama_kat);
                     ?>
                     <a href="<?= $link_kat ?>" class="badge-pill <?= $is_active ?>">
                         <?= htmlspecialchars($nama_kat) ?>
@@ -158,55 +161,55 @@ function limit_text($text, $limit) {
         </section>
 
         <section class="row g-4 mb-5">
-            <?php if($result_articles->num_rows > 0): ?>
-                <?php while($row = $result_articles->fetch_assoc()): ?>
-                <div class="col-md-4">
-                    <div class="article-card">
-                        <div class="article-thumb" 
-                             style="background-image: url('<?= !empty($row['thumbnail_url']) ? $row['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');">
-                        </div> 
-                        
-                        <div class="article-body">
-                            <div class="meta-tag text-warning"><?= htmlspecialchars($row['category']) ?></div>
-                            <h3 class="article-title"><?= htmlspecialchars($row['title']) ?></h3>
-                            <p class="article-excerpt"><?= limit_text($row['content'], 15) ?></p>
-                            
-                            <div class="article-footer d-flex justify-content-between align-items-center mt-auto">
-                                <span class="small text-muted"><?= date('d M Y', strtotime($row['created_at'])) ?></span>
-                                <a href="detail_artikel.php?slug=<?= $row['slug'] ?>" class="read-more-link">
-                                    Baca Selengkapnya <i class="fa-solid fa-arrow-right ms-2 small"></i>
-                                </a>
+            <?php if ($result_articles->num_rows > 0): ?>
+                <?php while ($row = $result_articles->fetch_assoc()): ?>
+                    <div class="col-md-4">
+                        <div class="article-card">
+                            <div class="article-thumb"
+                                style="background-image: url('<?= !empty($row['thumbnail_url']) ? $row['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');">
+                            </div>
+
+                            <div class="article-body">
+                                <div class="meta-tag text-warning"><?= htmlspecialchars($row['category']) ?></div>
+                                <h3 class="article-title"><?= htmlspecialchars($row['title']) ?></h3>
+                                <p class="article-excerpt"><?= limit_text($row['content'], 15) ?></p>
+
+                                <div class="article-footer d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="small text-muted"><?= date('d M Y', strtotime($row['created_at'])) ?></span>
+                                    <a href="detail_artikel.php?slug=<?= $row['slug'] ?>" class="read-more-link">
+                                        Baca Selengkapnya <i class="fa-solid fa-arrow-right ms-2 small"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <?php if($featured): ?>
-                    <?php else: ?>
+                <?php if ($featured): ?>
+                <?php else: ?>
                     <div class="col-12 text-center text-muted">Tidak ada artikel lain untuk ditampilkan.</div>
                 <?php endif; ?>
             <?php endif; ?>
         </section>
 
-        <?php if($total_pages > 1): ?>
-        <nav aria-label="Page navigation" class="mb-5">
-            <ul class="pagination justify-content-center align-items-center">
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="<?= ($page > 1) ? "?page=".($page-1).$url_category_param : '#' ?>" tabindex="-1">Sebelumnya</a>
-                </li>
+        <?php if ($total_pages > 1): ?>
+            <nav aria-label="Page navigation" class="mb-5">
+                <ul class="pagination justify-content-center align-items-center">
+                    <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= ($page > 1) ? "?page=" . ($page - 1) . $url_category_param : '#' ?>" tabindex="-1">Sebelumnya</a>
+                    </li>
 
-                <?php for($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?><?= $url_category_param ?>"><?= $i ?></a>
-                </li>
-                <?php endfor; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?><?= $url_category_param ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
 
-                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="<?= ($page < $total_pages) ? "?page=".($page+1).$url_category_param : '#' ?>">Berikutnya</a>
-                </li>
-            </ul>
-        </nav>
+                    <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= ($page < $total_pages) ? "?page=" . ($page + 1) . $url_category_param : '#' ?>">Berikutnya</a>
+                    </li>
+                </ul>
+            </nav>
         <?php endif; ?>
 
         <section class="cta-section-edu d-md-flex justify-content-between align-items-center text-center text-md-start">
@@ -220,7 +223,7 @@ function limit_text($text, $limit) {
             </div>
         </section>
 
-    </div> 
+    </div>
 
     <footer>
         <div class="container">
@@ -238,7 +241,7 @@ function limit_text($text, $limit) {
                         <li><a href="#">Laporan</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-6">
+                <div class="col-lg-2 col-md-6 col-6">
                     <h5>Edukasi</h5>
                     <ul class="list-unstyled">
                         <li><a href="edukasi.php">Artikel</a></li>
@@ -271,4 +274,5 @@ function limit_text($text, $limit) {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

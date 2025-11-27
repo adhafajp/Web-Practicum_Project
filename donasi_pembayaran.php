@@ -15,32 +15,35 @@ $anonim     = isset($_POST['is_anonymous']) ? 1 : 0;
 $pohon_id   = $_POST['pohon_id'] ?? 1;
 
 $harga_per_pohon = 10000;
-$list_pohon = [ 1 => "Mangga", 2 => "Mahoni", 3 => "Bakau" ];
+$list_pohon = [1 => "Mangga", 2 => "Mahoni", 3 => "Bakau"];
 $nama_pohon = $list_pohon[$pohon_id] ?? "Pohon";
 
 $jumlah_pohon = floor($nominal / $harga_per_pohon);
-if($jumlah_pohon < 1) $jumlah_pohon = 1;
+if ($jumlah_pohon < 1) $jumlah_pohon = 1;
 
-function formatRupiah($angka){
+function formatRupiah($angka)
+{
     return "Rp" . number_format($angka, 0, ',', '.');
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Metode Pembayaran - Donasi Oksigen</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="assets/css/donasi_pembayaran.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm">
@@ -55,12 +58,12 @@ function formatRupiah($angka){
     </nav>
 
     <div class="container main-container mt-5">
-        
+
         <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="step-label">Langkah 2 dari 3</div>
             <a href="javascript:history.back()" class="text-decoration-none small" style="color: #207FCE;"><i class="fa-solid fa-arrow-left me-1"></i> Kembali</a>
         </div>
-        
+
         <div class="progress-bar-container">
             <div class="progress-bar-fill"></div>
         </div>
@@ -69,7 +72,7 @@ function formatRupiah($angka){
         <p class="page-subtitle">Metode aman dan terverifikasi otomatis.</p>
 
         <form action="proses_pembayaran.php" method="POST" enctype="multipart/form-data">
-            
+
             <input type="hidden" name="nominal" value="<?= $nominal ?>">
             <input type="hidden" name="nama" value="<?= $nama ?>">
             <input type="hidden" name="email" value="<?= $email ?>">
@@ -79,7 +82,7 @@ function formatRupiah($angka){
             <input type="hidden" name="jumlah_pohon" value="<?= $jumlah_pohon ?>">
 
             <div class="row g-4">
-                
+
                 <div class="col-lg-8">
                     <div class="payment-card">
                         <h5 class="mb-4 fw-bold" style="font-family: 'Inria Serif', serif;">Metode Pembayaran</h5>
@@ -95,7 +98,7 @@ function formatRupiah($angka){
                                     <i class="fa-solid fa-circle-check check-icon"></i>
                                 </div>
                             </label>
-                            
+
                             <div class="qris-box" id="qrisContainer">
                                 <img src="assets/images/qris-placeholder.jpg" alt="QR Code" class="qris-img">
                                 <div class="small text-white-50">Scan kode di atas untuk membayar</div>
@@ -103,7 +106,7 @@ function formatRupiah($angka){
                         </div>
 
                         <span class="payment-category-title">Transfer Bank</span>
-                        
+
                         <label class="sub-payment-option">
                             <input type="radio" name="metode_bayar" value="BCA - Muhammad Farelino" class="sub-payment-radio">
                             <div class="sub-payment-box">
@@ -202,7 +205,7 @@ function formatRupiah($angka){
                             <span>Total</span>
                             <span class="text-primary"><?= formatRupiah($nominal) ?></span>
                         </div>
-                        
+
                         <div class="donor-info">
                             <div class="fw-bold text-dark mb-1">Data Donatur:</div>
                             <div><?= htmlspecialchars($nama) ?></div>
@@ -234,7 +237,7 @@ function formatRupiah($angka){
 
             function checkQris() {
                 const selected = document.querySelector('input[name="metode_bayar"]:checked');
-                if(selected && selected.value === 'QRIS') {
+                if (selected && selected.value === 'QRIS') {
                     qrisBox.style.display = 'block';
                 } else {
                     qrisBox.style.display = 'none';
@@ -248,4 +251,5 @@ function formatRupiah($angka){
         });
     </script>
 </body>
+
 </html>

@@ -30,16 +30,18 @@ $related_articles = $stmt_related->get_result();
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($article['title']) ?> - Donoxygen</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/detail_artikel.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
@@ -56,10 +58,10 @@ $related_articles = $stmt_related->get_result();
                     <li class="nav-item"><a class="nav-link" href="donasi.php">Donasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Dampak</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="edukasi.php">Edukasi</a></li> 
+                    <li class="nav-item"><a class="nav-link active" href="edukasi.php">Edukasi</a></li>
                 </ul>
             </div>
-             <div class="d-flex">
+            <div class="d-flex">
                 <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
             </div>
         </div>
@@ -69,10 +71,10 @@ $related_articles = $stmt_related->get_result();
 
         <div class="row">
             <div class="col-lg-8">
-                
+
                 <header class="article-header">
                     <div class="breadcrumb-custom">
-                        <a href="edukasi.php">Edukasi</a> 
+                        <a href="edukasi.php">Edukasi</a>
                         <i class="fa-solid fa-chevron-right mx-2" style="font-size: 0.7rem;"></i>
                         <span class="text-success"><?= htmlspecialchars($article['category']) ?></span>
                         <span class="breadcrumb-code">MH00<?= $article['id'] ?></span>
@@ -88,9 +90,9 @@ $related_articles = $stmt_related->get_result();
                 </header>
 
                 <div class="hero-image-container">
-                    <img src="<?= !empty($article['thumbnail_url']) ? $article['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>" 
-                         alt="<?= htmlspecialchars($article['title']) ?>" 
-                         class="hero-image">
+                    <img src="<?= !empty($article['thumbnail_url']) ? $article['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>"
+                        alt="<?= htmlspecialchars($article['title']) ?>"
+                        class="hero-image">
                 </div>
 
                 <article class="article-content">
@@ -107,7 +109,7 @@ $related_articles = $stmt_related->get_result();
 
             <div class="col-lg-4">
                 <div class="sidebar-wrapper ps-lg-4">
-                    
+
                     <div class="card-donasi">
                         <h5>Saatnya menambah oksigen bumi!</h5>
                         <p>Dukung pelestarian hutan dan program penambahan oksigen di Indonesia. Dampak nyata untuk masa depan.</p>
@@ -133,17 +135,17 @@ $related_articles = $stmt_related->get_result();
         <div class="related-section">
             <h4 class="fw-bold mb-4">Baca Juga Artikel Lainnya</h4>
             <div class="row">
-                <?php while($related = $related_articles->fetch_assoc()): ?>
-                <div class="col-md-4 col-sm-6">
-                    <div class="related-card">
-                        <div class="related-thumb" style="background-image: url('<?= !empty($related['thumbnail_url']) ? $related['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');"></div>
-                        <small class="text-warning fw-bold text-uppercase" style="font-size:0.7rem;"><?= htmlspecialchars($related['category']) ?></small>
-                        <a href="detail_artikel.php?slug=<?= $related['slug'] ?>" class="related-title mt-1">
-                            <?= htmlspecialchars($related['title']) ?>
-                        </a>
-                        <small class="text-muted"><?= date('d M Y', strtotime($related['created_at'])) ?></small>
+                <?php while ($related = $related_articles->fetch_assoc()): ?>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="related-card">
+                            <div class="related-thumb" style="background-image: url('<?= !empty($related['thumbnail_url']) ? $related['thumbnail_url'] : 'assets/images/placeholder.jpg' ?>');"></div>
+                            <small class="text-warning fw-bold text-uppercase" style="font-size:0.7rem;"><?= htmlspecialchars($related['category']) ?></small>
+                            <a href="detail_artikel.php?slug=<?= $related['slug'] ?>" class="related-title mt-1">
+                                <?= htmlspecialchars($related['title']) ?>
+                            </a>
+                            <small class="text-muted"><?= date('d M Y', strtotime($related['created_at'])) ?></small>
+                        </div>
                     </div>
-                </div>
                 <?php endwhile; ?>
             </div>
         </div>
@@ -165,7 +167,7 @@ $related_articles = $stmt_related->get_result();
                         <li><a href="#">Dampak</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-6">
+                <div class="col-lg-2 col-md-6 col-6">
                     <h5 class="h6 fw-bold">Edukasi</h5>
                     <ul class="list-unstyled small">
                         <li><a href="edukasi.php">Artikel</a></li>
@@ -190,4 +192,5 @@ $related_articles = $stmt_related->get_result();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

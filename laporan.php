@@ -67,17 +67,19 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Transparansi - Donoxygen</title>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="assets/css/laporan.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
@@ -94,10 +96,10 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
                     <li class="nav-item"><a class="nav-link" href="donasi.php">Donasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="dampak.php">Dampak</a></li>
                     <li class="nav-item"><a class="nav-link active" href="laporan.php">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li> 
+                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li>
                 </ul>
             </div>
-             <div class="d-flex">
+            <div class="d-flex">
                 <a href="donasi.php" class="btn btn-donasi-sm">Donasi Sekarang</a>
             </div>
         </div>
@@ -166,7 +168,7 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
                     <h3 class="fw-bold mb-1" style="color: #222;">Riwayat Donatur</h3>
                     <p class="text-muted mb-0">Terima kasih kepada <span class="fw-bold text-success"><?= $total_donatur ?></span> orang baik.</p>
                 </div>
-                
+
                 <div class="mt-3 mt-md-0" style="width: 100%; max-width: 300px;">
                     <form action="" method="GET" class="search-box input-group">
                         <input type="text" name="q" class="form-control" placeholder="Cari donatur..." value="<?= htmlspecialchars($keyword) ?>">
@@ -187,37 +189,37 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if($result_donatur && $result_donatur->num_rows > 0): ?>
-                            <?php 
-                                $no = $start_from + 1;
-                                while($row = $result_donatur->fetch_assoc()): 
-                                    
-                                    // Logika Anonim (Hamba Allah)
-                                    if ($row['is_anonymous'] == 1) {
-                                        $tampil_nama = "Hamba Allah";
-                                        $inisial = "H";
-                                    } else {
-                                        $tampil_nama = htmlspecialchars($row['donor_name']);
-                                        $inisial = strtoupper(substr($tampil_nama, 0, 1));
-                                    }
+                        <?php if ($result_donatur && $result_donatur->num_rows > 0): ?>
+                            <?php
+                            $no = $start_from + 1;
+                            while ($row = $result_donatur->fetch_assoc()):
 
-                                    $jumlah = number_format($row['amount'], 0, ',', '.');
-                                    // Kolom 'message' bisa NULL, jadi kita cek
-                                    $pesan = !empty($row['message']) ? htmlspecialchars($row['message']) : '<span class="text-muted fst-italic">-</span>';
-                                    $tanggal = date('d M Y, H:i', strtotime($row['transaction_date']));
+                                // Logika Anonim (Hamba Allah)
+                                if ($row['is_anonymous'] == 1) {
+                                    $tampil_nama = "Hamba Allah";
+                                    $inisial = "H";
+                                } else {
+                                    $tampil_nama = htmlspecialchars($row['donor_name']);
+                                    $inisial = strtoupper(substr($tampil_nama, 0, 1));
+                                }
+
+                                $jumlah = number_format($row['amount'], 0, ',', '.');
+                                // Kolom 'message' bisa NULL, jadi kita cek
+                                $pesan = !empty($row['message']) ? htmlspecialchars($row['message']) : '<span class="text-muted fst-italic">-</span>';
+                                $tanggal = date('d M Y, H:i', strtotime($row['transaction_date']));
                             ?>
-                            <tr>
-                                <td class="text-center"><?= $no++ ?></td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar-initial"><?= $inisial ?></div>
-                                        <span class="fw-medium"><?= $tampil_nama ?></span>
-                                    </div>
-                                </td>
-                                <td class="fw-bold text-success">Rp <?= $jumlah ?></td>
-                                <td><small><?= $pesan ?></small></td>
-                                <td><small class="text-muted"><?= $tanggal ?></small></td>
-                            </tr>
+                                <tr>
+                                    <td class="text-center"><?= $no++ ?></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-initial"><?= $inisial ?></div>
+                                            <span class="fw-medium"><?= $tampil_nama ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="fw-bold text-success">Rp <?= $jumlah ?></td>
+                                    <td><small><?= $pesan ?></small></td>
+                                    <td><small class="text-muted"><?= $tanggal ?></small></td>
+                                </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
@@ -232,27 +234,27 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
             </div>
         </section>
 
-        <?php if($total_pages > 1): ?>
-        <nav aria-label="Page navigation" class="mb-5">
-            <ul class="pagination justify-content-center align-items-center">
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="<?= ($page > 1) ? "?page=".($page-1).$url_search_param : '#' ?>" tabindex="-1"><i class="fa-solid fa-chevron-left"></i></a>
-                </li>
+        <?php if ($total_pages > 1): ?>
+            <nav aria-label="Page navigation" class="mb-5">
+                <ul class="pagination justify-content-center align-items-center">
+                    <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= ($page > 1) ? "?page=" . ($page - 1) . $url_search_param : '#' ?>" tabindex="-1"><i class="fa-solid fa-chevron-left"></i></a>
+                    </li>
 
-                <?php for($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?><?= $url_search_param ?>"><?= $i ?></a>
-                </li>
-                <?php endfor; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?><?= $url_search_param ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
 
-                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="<?= ($page < $total_pages) ? "?page=".($page+1).$url_search_param : '#' ?>"><i class="fa-solid fa-chevron-right"></i></a>
-                </li>
-            </ul>
-        </nav>
+                    <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                        <a class="page-link" href="<?= ($page < $total_pages) ? "?page=" . ($page + 1) . $url_search_param : '#' ?>"><i class="fa-solid fa-chevron-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
         <?php endif; ?>
 
-    </div> 
+    </div>
 
     <footer>
         <div class="container">
@@ -270,7 +272,7 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
                         <li><a href="laporan.php">Laporan</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-6">
+                <div class="col-lg-2 col-md-6 col-6">
                     <h5>Edukasi</h5>
                     <ul class="list-unstyled">
                         <li><a href="edukasi.php">Artikel</a></li>
@@ -303,4 +305,5 @@ $total_pages = ceil($row_count['total'] / $donors_per_page);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

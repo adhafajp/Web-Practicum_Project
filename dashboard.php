@@ -23,20 +23,22 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donasi Oksigen - Beranda</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inria+Serif:wght@300;400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-lg fixed-top">
@@ -53,10 +55,10 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                     <li class="nav-item"><a class="nav-link" href="donasi.php">Donasi</a></li>
                     <li class="nav-item"><a class="nav-link" href="dampak.php">Dampak</a></li>
                     <li class="nav-item"><a class="nav-link" href="laporan.php">Laporan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li> 
+                    <li class="nav-item"><a class="nav-link" href="edukasi.php">Edukasi</a></li>
                 </ul>
             </div>
-            
+
             <div class="d-flex align-items-center">
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <div class="dropdown me-3">
@@ -69,19 +71,27 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                             </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 p-2" style="border-radius: 15px; min-width: 200px;">
-                            <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted">Akun Anda</h6></li>
+                            <li>
+                                <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Akun Anda</h6>
+                            </li>
                             <li><span class="dropdown-item-text text-truncate fw-medium text-dark"><?= $_SESSION['user_name'] ?? 'User' ?></span></li>
-                            
+
                             <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
-                                <li><hr class="dropdown-divider my-2"></li>
-                                <li><h6 class="dropdown-header text-uppercase small fw-bold text-muted">Menu Admin</h6></li>
+                                <li>
+                                    <hr class="dropdown-divider my-2">
+                                </li>
+                                <li>
+                                    <h6 class="dropdown-header text-uppercase small fw-bold text-muted">Menu Admin</h6>
+                                </li>
                                 <li>
                                     <a class="dropdown-item rounded fw-medium py-2" href="admin_donasi.php">
                                         <i class="fa-solid fa-user-gear me-2 text-primary"></i>Kelola Donasi
                                     </a>
                                 </li>
                             <?php endif; ?>
-                            <li><hr class="dropdown-divider my-2"></li>
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
                             <li>
                                 <a class="dropdown-item rounded text-danger fw-medium py-2" href="logout.php">
                                     <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
@@ -105,7 +115,7 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
             <span class="hero-top-text">PLATFORM DONASI OKSIGEN TERBAIK</span>
             <h1 class="hero-main-title">Satu Pohon,<br>Sejuta Oksigen</h1>
             <p class="hero-subtitle">Berikan nafas baru untuk Bumi. Donasi mulai dari Rp10.000 dan bantu kami menghijaukan kembali hutan di seluruh Indonesia.</p>
-            
+
             <a href="donasi.php" class="btn-hero-custom">Mulai Donasi</a><br>
             <a href="dampak.php" class="hero-link-blue">Lihat dampak nyata <i class="fa-solid fa-arrow-right ms-1"></i></a>
         </div>
@@ -145,25 +155,25 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                 <h2 class="fw-bold mb-2">Mengapa Donoxygen?</h2>
                 <p class="text-muted mx-auto" style="max-width: 600px;">Kami merancang setiap langkah donasi secara transparan, mudah dipantau, dan berdampak nyata bagi bumi.</p>
             </div>
-            
+
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div> 
+                        <div class="why-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                         <h5 class="why-title">Transparansi Dana</h5>
                         <p class="why-desc">Pantau aliran donasi Anda secara realtime melalui laporan keuangan dan dashboard yang terbuka untuk publik.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon"><i class="fa-solid fa-map-location-dot"></i></div> 
+                        <div class="why-icon"><i class="fa-solid fa-map-location-dot"></i></div>
                         <h5 class="why-title">Lacak Pohonmu</h5>
                         <p class="why-desc">Dapatkan koordinat lokasi penanaman, foto pohon, dan update berkala mengenai pertumbuhan pohon donasi Anda.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="why-card">
-                        <div class="why-icon"><i class="fa-solid fa-users-line"></i></div> 
+                        <div class="why-icon"><i class="fa-solid fa-users-line"></i></div>
                         <h5 class="why-title">Dampak Terukur</h5>
                         <p class="why-desc">Kami menghitung estimasi oksigen yang dihasilkan dan karbon yang diserap dari setiap kontribusi Anda.</p>
                     </div>
@@ -210,7 +220,7 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
                         <li><a href="laporan.php">Laporan</a></li>
                     </ul>
                 </div>
-                 <div class="col-lg-2 col-md-6 col-6">
+                <div class="col-lg-2 col-md-6 col-6">
                     <h5>Edukasi</h5>
                     <ul class="list-unstyled">
                         <li><a href="edukasi.php">Artikel</a></li>
@@ -243,4 +253,5 @@ $total_oksigen = number_format($stats['total_oksigen'] ?? 0, 0, ',', '.');
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
