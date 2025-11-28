@@ -146,7 +146,9 @@ function formatRupiah($angka)
                 </div>
 
                 <div class="text-center">
-                    <a href="#" class="btn-sertifikat shadow-sm">Unduh Sertifikat Donasi</a>
+                    <a href="download_sertifikat.php?inv=<?= urlencode($id_transaksi) ?>" class="btn-sertifikat shadow-sm">
+                        <i class="fa-solid fa-download me-2"></i> Unduh Sertifikat Donasi
+                    </a>
                     <a href="dashboard.php" class="btn-home">Kembali ke Beranda</a>
                 </div>
 
